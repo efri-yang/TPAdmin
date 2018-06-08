@@ -4,58 +4,58 @@ namespace app\admin\common;
 class Tree {
     protected $repeatPlaceholder = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
-
     /**
-     * 数据排序
+     * 分类排序（降序）
      */
-
-
-
-
-//    static public function sort($arr, $cols) {
-//        foreach ($arr as $k => &$v) {
-//            if (!empty($v['sub'])) {
-//                $v['sub'] = self::sort($v['sub'], $cols);
-//            }
-//            $sort[$k] = $v[$cols];
-//        }
-//        if(isset($sort)){
-//            array_multisort($sort, SORT_DESC, $arr);
-//        }
-//        return $arr;
-//    }
-//    /**
-//     * 横向分类树
-//     */
-//    static public function hTree($arr, $pid = 0) {
-//        foreach ($arr as $k => $v) {
-//            if ($v['parent_id'] == $pid) {
-//                $data[$v['id']] = $v;
-//                $data[$v['id']]['sub'] = self::hTree($arr, $v['id']);
-//            }
-//        }
-//        return isset($data) ? $data : array();
-//    }
-//    /**
-//     * 纵向分类树
-//     */
-//    static public function vTree($arr, $pid = 0) {
-//        foreach ($arr as $k => $v) {
-//            if ($v['parent_id'] == $pid) {
-//                $data[$v['id']] = $v;
-//                $data += self::vTree($arr, $v['id']);
-//            }
-//        }
-//        return isset($data) ? $data : array();
-//    }
+    static public function sort($arr,$cols){
+        //子分类排序
+        foreach ($arr as $k => &$v) {
+            if(!empty($v['sub'])){
+                $v['sub']=self::sort($v['sub'],$cols);
+            }
+            $sort[$k]=$v[$cols];
+        }
+        if(isset($sort))
+            array_multisort($sort,SORT_DESC,$arr);
+        return $arr;
+    }
+    /**
+     * 横向分类树
+     */
+    static public function hTree($arr,$pid=0){
+        foreach($arr as $k => $v){
+            if($v['parent_id']==$pid){
+                $data[$v['menu_id']]=$v;
+                $data[$v['menu_id']]['sub']=self::hTree($arr,$v['menu_id']);
+            }
+        }
+        return isset($data)?$data:array();
+    }
+    /**
+     * 纵向分类树
+     */
+    static public function vTree($arr,$pid=0){
+        foreach($arr as $k => $v){
+            if($v['parent_id']==$pid){
+                $data[$v['menu_id']]=$v;
+                $data+=self::vTree($arr,$v['menu_id']);
+            }
+        }
+        return isset($data)?$data:array();
+    }
 //
 //    /**
 //        *传进来模板字符算,还有节点,选择的id
 //     */
-//    public function  getTree($nodeNum,$data,$tplStr="",$selId="",$reStr=""){
-//        //获取传进来节点的所有子元素(例如传进来的是0，那么表示获取所有根节点元素)
-//        $realData=self::vTree($data,$nodeNum);
-//    }
+    public function  getTree($data,$pid,$tplStr="",$selId="",$resultStr=""){
+
+        //获取传进来节点的所有子元素(例如传进来的是0，那么表示获取所有根节点元素)
+        //取得树形结构数据
+        $resData=self::hTree($data,$pid);
+
+
+
+    }
 
 
 

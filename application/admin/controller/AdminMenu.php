@@ -20,11 +20,17 @@ class AdminMenu extends Base {
         $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'menu_id' => 'asc'])->column('*', 'menu_id');
 
         $tree = new Tree();
-       
+
+
+        $strTpl='<tr>';
+
+        $tree->getTree($result,0);
 
 
 
         $menuList = $tree->getMenu(0, $result);
+
+
         $this->assign('menuadmin', $menuList);
 
         return $this->fetch();

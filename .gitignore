@@ -4,3 +4,4 @@ composer.json
 *.log
 thinkphp
 vendor
+pdf

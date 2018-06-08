@@ -23,8 +23,18 @@ class AdminMenu extends Base {
 
 
         $strTpl='<tr>';
+        $strTpl.='<td class="align-l">系统设置</td>';
+        $strTpl.='<td class="align-l">系统设置</td>';
+        $strTpl.='<td>系统设置</td>';
+        $strTpl.='<td>系统设置</td>';
+        $strTpl.='<td>系统设置</td>';
+        $strTpl.='</tr>';
+
+
+
 
         $tree->getTree($result,0);
+
 
 
 

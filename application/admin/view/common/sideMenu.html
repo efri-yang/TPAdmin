@@ -1,0 +1,41 @@
+<!-- side  start****************************************************** -->
+<div class="coms-layout-aside">
+    <div class="aside-unfold"><i class="iconfont f18">&#xe6d4;</i></div>
+    <div class="aside-menu-scroll">
+        <ul class="aside-menu">
+            {$webData["sidemenu"]}
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+(function($) {
+    $(function() {
+        var $a = $(".aside-menu").find('.treeview').children('a');
+        var $parent;
+        var $aside = $(".coms-layout-aside");
+        var $body = $("#J_coms-layout-body");
+        $.each($a, function(index, el) {
+            $(el).on("click", function() {
+                var $this = $(this);
+                $parent = $this.parent("li");
+                if ($parent.hasClass('hactive')) {
+                    $parent.removeClass('hactive');
+                } else {
+                    $parent.addClass('hactive');
+                }
+            })
+        });
+        $(".aside-unfold").on("click", function() {
+            if ($aside.hasClass('fold')) {
+                $aside.removeClass('fold');
+                $body.removeClass('unfold');
+            } else {
+                $aside.addClass('fold');
+                $body.addClass('unfold');
+                $aside.find(".treeview").removeClass('hactive');
+            }
+        })
+    })
+})(jQuery)
+</script>
+<!-- side  end****************************************************** -->

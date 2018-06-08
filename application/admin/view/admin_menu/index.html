@@ -1,0 +1,98 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <style type="text/css">
+    .coms-table-bd td i.iconfont {
+        margin-right: 5px;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 18px;
+        color: #666;
+    }
+    </style>
+    <div class="coms-table-wrap  pl30 pr30 mb30">
+        <!--  no-border  去掉头部就有边控了-->
+        <div class="clearfix mb15">
+            <a href="{:url('add')}" class="am-btn am-btn-success fr">添加菜单</a>
+        </div>
+        <div class="coms-table-bd">
+            <table class="am-table am-table-bordered">
+                <thead>
+                    <tr>
+                        <!-- th 中 复选框的宽度 写死 固定50  然后其他的用百分比，但是必须有一个是不要设置值得(这样可以自适应省去计算麻烦) -->
+                        <th width="5%"><span>ID</span></th>
+                        <th width="15%" class="align-l"><span>菜单名称</span></th>
+                        <th width="15%" class="align-l"><span>URL</span></th>
+                        <th width="8%"><span>父ID</span></th>
+                        <th width="10%"><span>图标</span></th>
+                        <th width="5%"><span>排序</span></th>
+                        <th width="5%"><span>状态</span></th>
+                        <th width="7%"><span>日志记录方式</span></th>
+                        <th width="15%"><span>操作</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$menuadmin}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    $(".coms-table-bd td .am-btn-danger").on("click", function(event) {
+        event.preventDefault();
+        var $this = $(this);
+        var layerIndex;
+        var href = $this.attr("href");
+        var tipTxt;
+        if ($this.data("roler") == "single") {
+            tipTxt = "您确定删除该菜单项？";
+        } else {
+            tipTxt = "删除该菜单项,其包含的子菜单也将被删除！"
+        }
+        layerIndex=layer.confirm(tipTxt, {
+            btn: ['取消', '确认'] //按钮
+        }, function() {
+            layer.close(layerIndex);
+        }, function() {
+            window.location.href = href;
+        });
+
+        
+    })
+})
+</script>
+<script type="text/javascript">
+$(function() {
+    var $checkboxAll = $('input[name="tblCheckAll"]');
+    var $checkboxSingle = $('input[name="menus[]"]');
+    var len = $checkboxSingle.length;
+    var count = 0;
+
+    $checkboxAll.on("click", function() {
+        var $this = $(this);
+        var isChecked = $this.prop("checked");
+
+        $checkboxSingle.prop({
+            checked: isChecked
+        });
+        $checkboxAll.prop("checked", isChecked);
+        count = len;
+    });
+    $.each($checkboxSingle, function(index, el) {
+        $(el).on("change", function() {
+            var $this = $(this);
+            var isChecked = $this.prop("checked");
+            if (!isChecked) {
+                $checkboxAll.prop("checked", isChecked);
+                count--;
+            } else {
+                count++;
+                if (count == len) {
+                    $checkboxAll.prop("checked", true);
+                }
+            }
+        })
+    });
+})
+</script>

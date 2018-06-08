@@ -1,0 +1,59 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="pl30 pr30 mt20">
+	    <div class="coms-table-wrap">
+	    	<div class="coms-datatable-hd clearfix">
+				<div class="am-form-group fr">
+					<a href="{:url('add')}"  class="am-btn am-btn-success w100">添加用户</a>
+	            </div>
+	    	</div>
+	        <div class="coms-table-bd">
+	            <table class="am-table am-table-bordered">
+	                <thead>
+	                    <tr>
+	                        <!-- th 中 复选框的宽度 写死 固定50  然后其他的用百分比，但是必须有一个是不要设置值得(这样可以自适应省去计算麻烦) -->
+	                        <th width="50">
+	                            <input type="checkbox" />
+	                        </th>
+	                        <th width="8%"><span>ID</span></th>
+	                        <th width="15%"><span>用户名</span></th>
+	                        <th width="15%"><span>邮箱</span></th>
+	                        <th width="15%"><span>电话码号</span></th>
+	                        <th width="10%"><span>状态</span></th>
+	                        <th><span>操作</span></th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                	{volist name="list" id="vo"}
+	                    <tr>
+	                        <td>
+	                            <input type="checkbox" value="{$vo.id}" />
+	                        </td>
+	                        <td>{$vo.id}</td>
+	                        <td>{$vo.username}</td>
+	                        <td>{$vo.email}</td>
+	                        <td>{$vo.phone}</td>
+	                        <td>{eq name="$vo.status" value="1"} 正常 {else/} 禁用 {/eq}</td>
+	                        <td>
+	                            <a href="{:url('del',array('id'=>$vo.id))}" class="am-btn am-btn-danger am-btn-xs">删除</a>
+	                            <a href="{:url('edit',array('id'=>$vo.id))}" class="am-btn am-btn-primary am-btn-xs">修改</a>
+	                        </td>
+	                    </tr>
+	                    {/volist}
+	                </tbody>
+	            </table>
+
+	        </div>
+
+	        {$page}
+	    </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+	$(function(){
+		
+	})
+</script>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{$webData["webtitle"]}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/iconfont/iconfont.css">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/AmazeUI/assets/css/amazeui.css">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/common.css">
+    <script type="text/javascript" src="__STATIC__/js/common/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="__STATIC__/AmazeUI/assets/js/amazeui.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/plugin/layer/layer.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/plugin/jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/common.js"></script>
+</head>
+
+<body>
+    <div class="coms-layout-container theme-default">
+        {include file="common/header" /}
+        <!--  -->
+        {include file="common/sideMenu" /}
+        <div class="coms-layout-body" id="J_coms-layout-body">
+            {__CONTENT__}
+        </div>
+    </div>
+</body>
+
+</html>

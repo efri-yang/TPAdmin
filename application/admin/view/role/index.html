@@ -1,0 +1,58 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="coms-table-wrap">
+        <div class="coms-table-hd clearfix no-border">
+            <a href="{:url('add')}" class="am-btn am-btn-success w100 fr">添加角色</a>
+        </div>
+    </div>
+    <div class="coms-table-bd mt20">
+        <table class="am-table am-table-bordered">
+            <thead>
+                <tr>
+                    <th width="8%"><span>ID</span></th>
+                    <th width="27%"><span>角色名</span></th>
+                    <th width="20%"><span>描述</span></th>
+                    <th width="10%"><span>状态</span></th>
+                    <th><span>操作</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="rolelist" id="vo"}
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.description}</td>
+                    <td>
+                        {eq name="$vo.status" value="1"} 正常 {else/} 禁用 {/eq}
+                    </td>
+                    <td>
+                        <a href="{:url('admin/role/access',array('id'=>$vo.id))}" class="am-btn am-btn-xs am-btn-success">授权</a>
+                        <a href="{:url('admin/role/del',array('id'=>$vo.id))}" class="am-btn am-btn-xs am-btn-danger">删除</a>
+                        <a href="{:url('admin/role/edit',array('id'=>$vo.id))}" class="am-btn am-btn-xs am-btn-default">编辑</a>
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+        {$page}
+    </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    $(".coms-table-bd .am-btn-danger").on("click", function(event) {
+        event.preventDefault();
+        var $this = $(this);
+        var layerIndex;
+        var href = $this.attr("href");
+        
+        layerIndex = layer.confirm('您确定删除', {
+            btn: ['取消', '确认'] //按钮
+        }, function() {
+            layer.close(layerIndex);
+        }, function() {
+            window.location.href = href;
+        });
+
+    })
+})
+</script>

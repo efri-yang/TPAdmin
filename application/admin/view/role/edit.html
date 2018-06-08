@@ -1,0 +1,36 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="am-form am-form-horizontal wp60 pl50 mt50">
+        <form data-am-validator action="{:url('edit',array('id'=>$Think.session.form_info.id))}" method="post">
+            <div class="am-form-group">
+                <label class="am-para-label">角色名：</label>
+                <div class="am-para-input">
+                    <input type="text" required name="title" value="{$Think.session.form_info.title|default=''}" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">角色描述：</label>
+                <div class="am-para-input">
+                    <input type="text" name="description" value="{$Think.session.form_info.description|default=''}" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label"></label>
+                <div class="am-para-input">
+                    <label class="am-radio-inline">
+                        <input type="radio" value="1" {$Think.session.form_info.status==1 ? "checked" :""} name="status">启用 
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" value="0" {$Think.session.form_info.status==0 ? "checked" :""}  name="status"> 禁用
+                    </label>
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label"></label>
+                <div class="am-para-input">
+                    <input type="submit" class="am-btn am-btn-primary am-btn-xl" value="添加" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

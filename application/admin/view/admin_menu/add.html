@@ -1,0 +1,77 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="am-form am-form-horizontal">
+    	<!--  data-am-validator -->
+
+        
+        <form data-am-validator  method="post" action="{:url('add')}">
+            <div class="am-form-group">
+                <label class="am-para-label">上级菜单：</label>
+                <div class="am-para-input">
+                    <select name="parent_id">
+                        <option value="0">根目录</option>
+                        {$optionList}
+                    </select>
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label">菜单名称：</label>
+                <div class="am-para-input">
+                   <input type="text" required name="title" value="" />
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label">URL：</label>
+                <div class="am-para-input">
+                   <input type="text" required name="url"  pattern="^[0-9a-zA-Z//]+$" />
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label">菜单图标：</label>
+                <div class="am-para-input">
+                   <input type="text" required name="icon" />
+                </div>
+            </div>
+
+             <div class="am-form-group">
+                <label class="am-para-label">排序：</label>
+                <div class="am-para-input">
+                   <input type="text"  value="1" name="sort_id" />
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label">是否显示：</label>
+                <div class="am-para-input">
+                  	<label class="am-radio-inline"><input type="radio" name="is_show" value="1" checked>是</label>
+
+                  	<label class="am-radio-inline"><input type="radio" name="is_show" value="0">否</label>
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label">日志记录：</label>
+                <div class="am-para-input">
+                  	<select name="log_type">
+                        <option value="0">不记录日志</option>
+                        <option value="1">GET</option>
+                        <option value="2">POST</option>
+                        <option value="3">PUT</option>
+                        <option value="4">DELETE</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-para-label"></label>
+                <div class="am-para-input">
+                  	<input type="submit" class="am-btn am-btn-primary">
+                  	<input type="reset" class="am-btn am-btn-default">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

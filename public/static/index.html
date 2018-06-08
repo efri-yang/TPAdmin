@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">  
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" type="text/css" href="css/iconfont/iconfont.css">
+    <link rel="stylesheet" type="text/css" href="./AmazeUI/assets/css/amazeui.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <script type="text/javascript" src="./js/common/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="AmazeUI/assets/js/amazeui.js"></script>
+    <script type="text/javascript" src="js/plugin/layer/layer.js"></script>
+    <script type="text/javascript" src="js/plugin/jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+</head>
+    
+<body>           
+    <div class="coms-layout-container theme-default">
+        <!-- 头部  start****************************************************** -->
+    <div class="coms-layout-header">
+        <a href="#" class="logo">小鱼生活消费大平台</a>
+        <ul class="header-nav">
+            <li class="active"><a href="">首页</a></li>
+            <li><a href="">社区</a></li>
+            <li><a href="">好店</a></li>
+            <li><a href="">行业</a></li>
+            <li><a href="">白卡</a></li>
+        </ul>
+        <div class="header-userinfo">
+            <a class="info-name" href="javascript:;">onetao<span class="arrow"></span></a>
+            <ul class="dropdown-list">
+                <li><a href="#">操作1</a></li>
+                <li><a href="#">操作2</a></li>
+                <li><a href="#">操作3</a></li>
+            </ul>
+        </div>
+
+        <div class="header-notice">
+            <a class="tit" href="javascript:;">通知<b><i>8</i></b></a>
+            <ul class="dropdown-list">
+                <li><a href="#">操作1</a></li>
+                <li><a href="#">操作2</a></li>
+                <li><a href="#">操作31</a></li>
+            </ul>
+        </div>
+    </div>
+<!-- 头部  end****************************************************** --> <!-- side  start****************************************************** -->
+<div class="coms-layout-aside">
+    <div class="aside-unfold"><i class="iconfont f18">&#xe6d4;</i></div>
+    <div class="aside-menu-scroll">
+        <ul class="aside-menu">
+            <li class="treeview active hactive">
+                <a href="javascript:void(0)" data-tip="榜单管理">
+                    <i class="iconfont f14">&#xe65d;</i>
+                    <span class="txt">榜单管理</span>
+                    <span class="more"></span> 
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14"></i><span class="txt">榜单管理1-1</span></a>
+                    </li>
+                    <li class="treeview active hactive">
+                        <a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                             <i class="iconfont f14">&#xe65d;</i>
+                            <span class="txt">榜单管理1-2</span>
+                            <span class="more"></span> 
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="current"><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-2-1</span></a></li>
+                            <li><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-2-2</span></a></li>
+                            <li><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-2-3</span></a></li>
+                            <li><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-2-4</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="current"><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-3</span></a></li>
+                    <li><a href="#"><span class="fl">&nbsp;&nbsp;&nbsp;&nbsp;</span><i class="iconfont f14">&#xe65d;</i><span class="txt">榜单管理1-4</span></a></li>
+                </ul>
+            </li>
+
+            <li class="current">
+                <a href="javascript:void(0)" data-tip="榜单管理">
+                    <i class="iconfont f14">&#xe65d;</i>
+                    <span class="txt">榜单管理</span>
+                    <span class="more"></span> 
+                </a>
+               
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- side  end****************************************************** -->
+<script type="text/javascript">
+(function($) {
+    $(function() {
+        var $a = $(".aside-menu").find('.treeview').children('a');
+        var $parent;
+        var $aside=$(".coms-layout-aside");
+        var $body=$("#J_coms-layout-body");
+        $.each($a, function(index, el) {
+            $(el).on("click", function() {
+                var $this = $(this);
+                $parent = $this.parent("li");
+                if ($parent.hasClass('hactive')) {
+                    $parent.removeClass('hactive');
+                } else {
+                    $parent.addClass('hactive');
+                }
+            })
+        });
+        $(".aside-unfold").on("click",function(){
+            if($aside.hasClass('fold')){
+                $aside.removeClass('fold');
+                $body.removeClass('unfold');
+            }else{
+                $aside.addClass('fold');
+                $body.addClass('unfold');
+                $aside.find(".treeview").removeClass('hactive');
+            }
+        })
+    })
+})(jQuery)
+</script>
+        <div class="coms-layout-body p15" id="J_coms-layout-body">
+            <div class="coms-elem-quote am-cf">
+	<span class="fl f16">通用框架示范</span>
+	<ol class="am-breadcrumb fr p0 m0"><li><a href="#">首页</a></li><li><a href="#">分类</a></li><li class="am-active">内容</li></ol>
+</div>
+
+
+                   
+            
+            <!--  table 表格样式************************************* -->
+            <div class="pb50"></div>
+            <div class="coms-elem-quote am-cf">
+                <span class="fl f16">表格(无插件静态)</span> 
+            </div>
+
+            <div class="coms-table-wrap">
+    <!--  no-border  去掉头部就有边控了-->
+    <div class="coms-table-hd clearfix no-border">
+        <div class="am-form am-form-horizontal">
+            <div class="am-form-group fl">
+                <label class="am-para-label">榜单名称：</label>
+                <div class="am-para-inline w200">
+                    <input type="text" />
+                </div>
+            </div>
+            <div class="am-form-group fl">
+                <label class="am-para-label">类型：</label>
+                <div class="am-para-inline w150">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+            </div>
+            <div class="am-form-group fl">
+                <label class="am-para-label">分类：</label>
+                <div class="am-para-inline w150 mr10">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+                <div class="am-para-inline w150 mr10">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+            </div>
+            <div class="am-form-group fl ml20">
+                <button type="button" class="am-btn am-btn-success w100">搜索</button>
+            </div>
+        </div>
+    </div>
+    <div class="coms-table-bd">
+        <table class="am-table am-table-bordered">
+            <thead>
+                <tr>
+                    <!-- th 中 复选框的宽度 写死 固定50  然后其他的用百分比，但是必须有一个是不要设置值得(这样可以自适应省去计算麻烦) -->
+                    <th width="50">
+                        <input type="checkbox" />
+                    </th>
+                    <th width="8%"><span>ID</span><span class="sort" data-sort="asc"><i class="asc"></i><i class="desc"></i></span></th>
+                    <th width="27%"><span>榜单名称</span><span class="sort" data-sort="desc"><i class="asc"></i><i class="desc"></i></span></th>
+                    <th width="15%"><span>标签</span></th>
+                    <th width="10%"><span>类型</span></th>
+                    <th width="10%"><span>样式</span></th>
+                    <th width="10%"><span>状态</span></th>
+                    <th><span>操作</span></th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>01</td>
+                    <td>厦门某某店面01</td>
+                    <td>美食，家装，亲子</td>
+                    <td>官方</td>
+                    <td>大图</td>
+                    <td>正常</td>
+                    <td>
+                        <a href="#" class="am-btn am-btn-danger am-btn-xs">删除</a>
+                        <a href="#" class="am-btn am-btn-primary am-btn-xs">修改</a>
+                    </td>
+                </tr>
+              
+               
+            </tbody>
+        </table>
+    </div>
+    <div class="coms-table-ft clearfix">
+        <div class="hander am-form">
+    <label class="checkall">
+        <input type="checkbox">全选</label>
+    <div class="am-para-inline w120">
+        <select>
+            <option>批量操作</option>
+            <option>删除</option>
+        </select>
+    </div>
+</div>
+        <div class="coms-pagination fr mr20">
+    <span class="total">共100条数据</span>
+    <a href="#" class="first">首页</a>
+    <span class="first disabled">首页</span>
+    <a href="#" class="prev">上一页</a>
+    <span class="prev disabled">上一页</span>
+    <a href="#" class="num">1</a>
+    <span class="more">...</span>
+    <a href="#" class="num">4</a>
+    <a href="#" class="num">5</a>
+    <span class="num current">6</span>
+    <a href="#" class="num">7</a>
+    <a href="#" class="num">8</a>
+    <span class="more">...</span>
+    <a href="#" class="num">20</a>
+    <a href="#" class="next">下一页</a>
+    <span class="next disabled">下一页</span>
+    <span class="last disabled">末页</span>
+    <span class="sel">
+                <select>
+                    <option value="10" selected="">10 条/页</option>
+                    <option value="20">20 条/页</option>
+                    <option value="30">30 条/页</option>
+                    <option value="40">40 条/页</option>
+                    <option value="50">50 条/页</option>
+                </select>
+            </span>
+    <span class="skip">到第<input type="text" min="1" value="6">页<button type="button">确定</button></span>
+</div>
+    </div>
+</div>
+             
+            <div class="pb50"></div>
+            <div class="coms-elem-quote am-cf">
+                <span class="fl f16">表格(datatables)插件</span>
+            </div>
+            
+            <script type="text/javascript" src="js/plugin/datatables/amazeui.datatables.js"></script>
+<link rel="stylesheet" type="text/css" href="js/plugin/datatables/amazeui.datatables.css">
+<link rel="stylesheet" type="text/css" href="css/linshi.css">
+<div class="coms-datatable-wrap">  
+    <div class="coms-datatable-hd">
+        <div class="am-form am-form-horizontal">
+            <div class="am-form-group fl">
+                <label class="am-para-label">榜单名称：</label>
+                <div class="am-para-inline w200">
+                    <input type="text" />
+                </div>
+            </div>
+            <div class="am-form-group fl">
+                <label class="am-para-label">类型：</label>
+                <div class="am-para-inline w150">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+            </div>
+            <div class="am-form-group fl">
+                <label class="am-para-label">分类：</label>
+                <div class="am-para-inline w150 mr10">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+                <div class="am-para-inline w150 mr10">
+                    <select required="" name="province">
+                        <option value="">请选择</option>
+                        <option value="option1">选项一...</option>
+                        <option value="option2">选项二.....</option>
+                        <option value="option3" disabled="">选项三........</option>
+                    </select>
+                </div>
+            </div>
+            <div class="am-form-group fl ml20">
+                <button type="button" class="am-btn am-btn-success w100">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table class="am-table am-table-bordered" id="table-01"></table>
+    <div class="coms-datatable-handler am-form">
+        <label class="checkall mr20">
+            <input type="checkbox" name="checkall">全选</label>
+        <div class="fl">
+            <select>
+                <option value="">请选择</option>
+                <option value="option1">选项一...</option>
+                <option value="option2">选项二.....</option>
+                <option value="option3" disabled="">选项三........</option>
+            </select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+//   dom: "<'am-g am-datatable-hd'<'am-u-sm-6'l><'am-u-sm-6'f>>" +
+// "<'am-g'<'am-u-sm-12'tr>>" +
+// "<'am-g am-datatable-footer'<'am-u-sm-5'i><'am-u-sm-7'p>>",
+$(function() {
+    
+    $("#table-01").DataTable({
+        "dom": "<'.coms-datatable-bd'tr><'.coms-datatable-ft clearfix'<'.page-every-count'l><'.page-num-list'p><'.page-info'i>>",
+        "processing": true,
+        "serverSide": true,
+        'ordering': false,
+        "pageLength":10,//每页显示几条
+        "ajax": {
+            "url": "https://wnworld.com/api/haoDianGuanLiHouTai/table.php",
+            "type": "post"
+        },
+        "columns": [{
+                data: null,
+                bSortable: false,
+                className: "align-c",
+                width: "60px",
+                title:'<input type="checkbox" name="checkall" class="checkall" />',
+                render: function (data, type, row){
+                     return '<input type="checkbox"  name="checkchild[]" class="checkchild"  value="' + data.id + '" />';
+                     
+                }
+            },
+            { "data": "id",title:"榜单 ID",width:"40%",className:"align-c"},
+            { "data": "name",title:"榜单名称",width:"40%",className:"align-c"},
+            { "data":null,title:"操作",className:"align-c"},
+        ],
+        "columnDefs": [ {
+				targets:-1,
+		        render: function(data, type, row, meta) {
+		            return '<a type="button"  href="#" onclick="del("' + row.id +'")" >编辑</a> | <a type="button"  href="#" onclick="del("' + row.id +'")" >删除</a>';
+		        }
+        }],
+        "fnDrawCallback": function(){
+
+            // var oTable = $("#table-01").dataTable();
+            // $('#redirect').keyup(function(e){
+            //     if($(this).val() && $(this).val()>0){
+            //         var redirectpage = $(this).val()-1;
+            //     }else{
+            //         var redirectpage = 0;
+            //     }
+            //     oTable.fnPageChange( redirectpage );
+            // });
+        },
+        "pagingType": "full_numbers",//显示首页尾页
+        "language": {
+            "processing": "处理中...",
+            "lengthMenu": "每页显示 _MENU_ 条",
+            "zeroRecords": "没有匹配结果",
+            // "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+            "info": "共 _TOTAL_ 条数据",
+            "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+            "infoFiltered": "(由 _MAX_ 项结果过滤)",
+            "infoPostFix": "",
+            "search": "搜索:",
+            "searchPlaceholder": "搜索...",
+            "url": "",
+            "emptyTable": "表中数据为空",
+            "loadingRecords": "载入中...",
+            "infoThousands": ",",
+            "paginate": {
+                "first": "首页",
+                "previous": "上一页",
+                "next": "下一页",
+                "last": "末页"
+            }
+          
+        }
+
+    });
+
+    $("[name=checkall]:checkbox").click(function(){
+    	
+          
+    });
+})
+</script>
+
+             <!--  表单验证************************************* -->
+            <div class="pb50"></div>
+            <div class="coms-elem-quote am-cf">
+                <span class="fl f16">表单验证</span>
+            </div>
+            <script type="text/javascript" src="js/plugin/webuploader-0.1.5/webuploader.min.js"></script>
+<link rel="stylesheet" type="text/css" href="js/plugin/webuploader-0.1.5/webuploader.css" />
+<form action="" class="am-form am-form-horizontal" data-am-validator>
+  
+    <div class="am-form-group">
+      <label class="am-para-label">用户名：</label>
+      <div class="am-para-input"><input type="text"  minlength="3" placeholder="输入用户名(至少 3 个字符)" required /></div>
+    </div>
+    <div class="am-form-group">
+      <label class="am-para-label">密码：</label>
+      <div class="am-para-input"><input type="text"  placeholder="请输入密码" required/></div>
+    </div>
+
+    <div class="am-form-group">
+      <label class="am-para-label">邮箱：</label>
+      <div class="am-para-input"><input type="email"  placeholder="邮箱" required/></div>
+    </div>
+
+    <div class="am-form-group">
+      <label class="am-para-label">封面图片(头像):</label>
+      <div class="am-para-input">
+        <div class="coms-upload-single-box">
+                <div class="no-pic" id="J_no-pic"></div>
+                <ul class="uploading-img-list clearfix" id="J_uploader-list">
+                </ul>
+                <div class="upload-btn-group clearfix">
+                    <div id="filePicker" class="filepicker-container"></div>
+                </div>
+        </div>
+        <script type="text/javascript">
+            var uploader = WebUploader.create({
+                    pick: {
+                        id: '#filePicker',
+                        label: '点击上传本地头像'
+                    },
+                    formData: {
+                        uid: ""
+                    },
+                    accept: { // 只允许选择图片文件格式
+                        title: 'Images',
+                        extensions: 'gif,jpg,bmp,png',
+                        mimeTypes: 'image/jpg,image/jpeg,image/png'
+                    },
+                    server: '',
+                    //限制文件的大小
+                    fileSingleSizeLimit: 2 * 1024 * 1024,
+                    fileNumLimit: 1,
+                    fileSizeLimit: 4 * 1024 * 1024
+                });
+        </script>
+      </div>
+    </div>
+
+    <div class="am-form-group">
+      <label class="am-para-label">封面图片(头像)-上传步骤: </label>
+      <div class="am-para-input">
+         <div class="coms-upload-single-box">
+                <ul class="uploading-img-list clearfix" id="J_uploader-list">
+                    <li>
+                        <div class="img-wrap preview">预览中...</div>
+                        <div class="handle-bar">
+                            <span class="del-btn">删除</span>
+                            <span class="upload-btn">上传</span>
+                        </div>
+                        <p class="progressing">
+                            <span style="width:0;"></span>
+                        </p>
+                        <span class="error">上传失败</span>
+                    </li>
+                    <li>
+                        <div class="img-wrap">
+                            <img src="upload/icon_perssion_1.png" />
+                        </div>
+                        <div class="handle-bar" style="display:block;">
+                            <span class="del-btn">删除</span>
+                            <span class="upload-btn">上传</span>
+                        </div>
+                        <p class="progressing">
+                            <span style="width:0;"></span>
+                        </p>
+                        <span class="error">上传失败</span>
+                        <span class="success"></span>
+                    </li>
+                    <li>
+                        <div class="img-wrap">
+                            <img src="upload/icon_perssion_1.png" />
+                        </div>
+                        <div class="handle-bar">
+                            <span class="del-btn">删除</span>
+                            <span class="upload-btn">上传</span>
+                        </div>
+                        <p class="progressing" style="display:block;">
+                            <span style="width:50%;"></span>
+                        </p>
+                        <span class="error">上传失败</span>
+                        <span class="success"></span>
+                    </li>
+                    <li>
+                        <div class="img-wrap">
+                            <img src="upload/icon_perssion_1.png" />
+                        </div>
+                        <div class="handle-bar">
+                            <span class="del-btn">删除</span>
+                            <span class="upload-btn">上传</span>
+                        </div>
+                        <p class="progressing">
+                            <span style="width:0%;"></span>
+                        </p>
+                        <span class="error" style="display: block;">上传失败</span>
+                        <span class="success"></span>
+                    </li>
+                    <li>
+                        <div class="img-wrap">
+                            <img src="upload/icon_perssion_1.png" />
+                        </div>
+                        <div class="handle-bar">
+                            <span class="del-btn">删除</span>
+                            <span class="upload-btn">上传</span>
+                        </div>
+                        <p class="progressing">
+                            <span style="width:50%;"></span>
+                        </p>
+                        <span class="success" style="display: block;"></span>
+                    </li>
+                </ul>
+            </div>
+        <script type="text/javascript">
+            var uploader = WebUploader.create({
+                    pick: {
+                        id: '#filePicker',
+                        label: '点击上传本地头像'
+                    },
+                    formData: {
+                        uid: ""
+                    },
+                    accept: { // 只允许选择图片文件格式
+                        title: 'Images',
+                        extensions: 'gif,jpg,bmp,png',
+                        mimeTypes: 'image/jpg,image/jpeg,image/png'
+                    },
+                    server: '',
+                    //限制文件的大小
+                    fileSingleSizeLimit: 2 * 1024 * 1024,
+                    fileNumLimit: 1,
+                    fileSizeLimit: 4 * 1024 * 1024
+                });
+        </script>
+      </div>
+    </div>
+
+    <div class="am-form-group">
+      <label class="am-para-label">选择框：</label>
+      <div class="am-para-input">
+          <select required name="pro">
+            <option value="">请选择</option>
+            <option value="option1">选项一...</option>
+            <option value="option2">选项二.....</option>
+            <option value="option3" disabled>选项三........</option>
+          </select>
+      </div>
+    </div>
+
+    <div class="am-form-group">
+      <label class="am-para-label">选择框：</label>
+      <div class="am-para-inline w150 mr10">
+          <select required name="province">
+            <option value="">省</option>
+            <option value="option1">选项一...</option>
+            <option value="option2">选项二.....</option>
+            <option value="option3" disabled>选项三........</option>
+          </select>
+      </div>
+      <div class="am-para-inline w150 mr10">
+          <select required name="city">
+            <option value="">市</option>
+            <option value="option1">选项一...</option>
+            <option value="option2">选项二.....</option>
+            <option value="option3" disabled>选项三........</option>
+          </select>
+      </div>
+      <div class="am-para-inline w150 mr10">
+          <select required name="district">
+            <option value="">区</option>
+            <option value="option1">选项一...</option>
+            <option value="option2">选项二.....</option>
+            <option value="option3" disabled>选项三........</option>
+          </select>
+      </div>
+    </div>
+    <div class="am-form-group">
+      <label class="am-para-label">文本域：</label>
+      <div class="am-para-input">
+           <textarea  rows="5" minlength="2" maxlength="100000" required></textarea>
+      </div>
+    </div>
+    <div class="am-form-group">
+      <label class="am-para-label">编辑器：</label>
+      <div class="am-para-input">
+          <textarea id="container"  required name="content" type="text/plain">这里写你的初始化内容
+          </textarea>
+          <script type="text/javascript" src="js/plugin/ueditor/ueditor.config.js"></script>
+          <!-- 编辑器源码文件 -->
+          <script type="text/javascript" src="js/plugin/ueditor/ueditor.all.js"></script>
+          <!-- 实例化编辑器 -->
+          <script type="text/javascript">
+          var ue = UE.getEditor('container');
+          </script>
+      </div>
+    </div>
+    <div class="am-form-group">
+        <label class="am-para-label"></label>
+        <div class="am-para-input"><button class="am-btn am-btn-secondary" type="submit">提交</button></div>
+        
+    </div>
+    
+  
+</form>
+
+
+<script type="text/javascript">
+
+</script>
+            <!--  标题************************************* -->
+            <div class="pb50"></div>
+            <div class="coms-elem-quote am-cf">
+                <span class="fl f16">两种标题</span>
+            </div>
+            <p class="am-text-lg mb10">标题1</p>
+            <hr>
+            <p class="am-text-default mb10">标题2</p>
+            <hr> 
+            <!--  tab 选项卡************************************* -->
+            <div class="pb50"></div>
+            <div class="coms-elem-quote am-cf">
+                <span class="fl f16">三种tab选项标题</span>
+            </div>
+            <div class="am-tabs"  data-am-tabs="{noSwipe: 1}">
+  <ul class="am-tabs-nav coms-tab-title type-1">
+    <li class="am-active"><a href="#tab1">恣意</a></li>
+    <li><a href="#tab2">等候</a></li>
+    <li><a href="#tab3">流浪</a></li>
+  </ul>
+
+  <div class="am-tabs-bd am-tabs-bd-ofv no-border">
+    <div class="am-tab-panel am-active" id="tab1">111111</div>
+    <div class="am-tab-panel" id="tab2">22222</div>
+    <div class="am-tab-panel" id="tab3">3333</div>
+  </div>
+</div>
+
+
+<div class="pb50"></div>
+
+<div class="am-tabs"  data-am-tabs="{noSwipe: 1}">
+  <ul class="am-tabs-nav coms-tab-title type-2">
+    <li class="am-active"><a href="#tab1">恣意</a></li>
+    <li><a href="#tab2">等候</a></li>
+    <li><a href="#tab3">流浪</a></li>
+  </ul>
+
+  <div class="am-tabs-bd am-tabs-bd-ofv no-border">
+    <div class="am-tab-panel am-active" id="tab1">111111</div>
+    <div class="am-tab-panel" id="tab2">22222</div>
+    <div class="am-tab-panel" id="tab3">3333</div>
+  </div>
+</div>
+
+
+
+<div class="am-tabs"  data-am-tabs="{noSwipe: 1}">
+  <ul class="am-tabs-nav  am-nav am-nav-tabs">
+    <li class="am-active"><a href="#tab1" class="clr333">恣意</a></li>
+    <li><a href="#tab2" class="clr333">等候</a></li>
+    <li><a href="#tab3" class="clr333">流浪</a></li>
+  </ul>
+
+  <div class="am-tabs-bd am-tabs-bd-ofv">
+    <div class="am-tab-panel am-active" id="tab1">111111</div>
+    <div class="am-tab-panel" id="tab2">22222</div>
+    <div class="am-tab-panel" id="tab3">3333</div>
+  </div>
+</div>
+
+
+
+<!-- <div class="clearfix">
+	<ul class="coms-tab-title type-2">
+    <li class="active"><a href="#tab-test-11" data-toggle="tab">选项卡01</a></li>
+    <li><a href="#tab-test-12" data-toggle="tab">选项卡02</a></li>
+    <li><a href="#tab-test-13" data-toggle="tab">选项卡03</a></li>
+    <li><a href="#tab-test-14" data-toggle="tab">选项卡04</a></li>
+</ul>
+    <div class="com-tab-body active" id="tab-test-11">
+        <div class="p20">选项卡————————————————01</div>
+    </div>
+    <div class="com-tab-body" id="tab-test-12">
+        <div class="p20">选项卡————————————————02</div>
+    </div>
+    <div class="com-tab-body" id="tab-test-13">
+        <div class="p20">选项卡————————————————03</div>
+    </div>
+    <div class="com-tab-body" id="tab-test-14">
+        <div class="p20">选项卡————————————————04</div>
+    </div>
+</div>
+ -->
+        </div>
+    </div>
+</body>
+
+</html>

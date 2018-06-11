@@ -6,27 +6,32 @@ use think\Db;
 
 class Test extends Controller {
     public function index() {
-        $arr = array(
-            array('id' => 1, 'pid' => 0, 'name' => '福建省', 'sort' => 100),
-            array('id' =>5, 'pid' => 1, 'name' => '漳州市', 'sort' => 60),
-            array('id' =>2, 'pid' => 1, 'name' => '福州市', 'sort' => 90),
-            array('id' =>3, 'pid' => 1, 'name' => '泉州市', 'sort' => 80),
-            array('id' =>4, 'pid' => 1, 'name' => '厦门市', 'sort' => 70),
+        $data=Db::table("think_admin_menus")->order(["sort_id"=>"desc",'menu_id' => 'asc'])->column('*', 'menu_id');
 
-            array('id' =>7, 'pid' => 5, 'name' => '龙文', 'sort' => 90),
-            array('id' =>8, 'pid' => 5, 'name' => '漳浦县', 'sort' => 80),
-            array('id' =>9, 'pid' => 5, 'name' => '南靖县', 'sort' => 70),
-            array('id' =>6, 'pid' => 5, 'name' => '龙海', 'sort' => 100)
+        $data=Tree2::hTree($data,0);
 
 
-        );
+
+        $strTpl="";
+        $strTpl.="<tr class='\$selected'>";
+        $strTpl.="<td>\$menu_id</td>";
+        $strTpl.="<td>\$space\$title</td>";
+        $strTpl.="<td>\$url</td>";
+        $strTpl.="<td></td>";
+        $strTpl.="<td><i class='iconfont \$icon'></i>\$icon</td>";
+        $strTpl.="<td>\$status</td>";
+        $strTpl.="<td>\$log_type</td>";
+        $strTpl.="<td><a href='#' class='am-btn am-btn-danger am-btn-xs mr5'>删除</a><a href='#' class='am-btn am-btn-danger am-btn-xs mr5'>修改</a></td>";
+        $strTpl.="</tr>";
 
 
-        $arr3=Tree2::hTree($arr);
 
-        $arr2 = Tree2::sort($arr3, 'sort');
 
-        print_r($arr2);
+
+        $tree=new Tree2();
+        $str=$tree->getTree($data,$strTpl,11);
+        $this->assign("str",$str);
+        return $this->fetch("index");
 
     }
 }

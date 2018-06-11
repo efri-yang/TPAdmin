@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\common;
+
 class Tree2 {
     static public function sort($arr, $cols) {
         //子分类排序
@@ -20,9 +21,9 @@ class Tree2 {
      */
     static public function hTree($arr, $pid = 0) {
         foreach ($arr as $k => $v) {
-            if ($v['pid'] == $pid) {
-                $data[$v['id']] = $v;
-                $data[$v['id']]['sub'] = self::hTree($arr, $v['id']);
+            if ($v['parent_id'] == $pid) {
+                $data[$v['menu_id']] = $v;
+                $data[$v['menu_id']]['sub'] = self::hTree($arr, $v['menu_id']);
             }
         }
         return isset($data) ? $data : array();
@@ -39,5 +40,60 @@ class Tree2 {
         }
         return isset($data) ? $data : array();
     }
+
+    /**
+     * [getTree description]
+     * $data  [数组] $data  数据  最终要展示的数据
+     * $pid  [数值] $pid  获取那一层的数据
+     * $tplStr  [字符串]       模板字符串
+     * $resStr [字符串] 返回的字符串
+     */
+    
+    public function getTree($data,$tplStr="",$selectId="",$resStr="",$level=0){
+        $num=0;
+        $total=count($data);
+        $selected="";
+        $space="";
+
+
+        if($level !=0 && count($data)){
+
+             
+
+             echo "ASdfasdfasdf";
+
+        }
+$level++;
+
+        foreach ($data as $k => $v) {
+            //证明了第一层级
+            
+           
+            
+            if($k==$selectId){
+                $selected="selected";
+            }
+            //有子元素
+            
+            $space=str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;",$level);
+
+            extract($v);
+            eval("\$nstr = \"$tplStr\";");
+            $resStr.=$nstr;
+            if(count($v["sub"])){
+              echo $level;
+                $resStr=$this->getTree($v["sub"],$tplStr,$selectId,$resStr,$level);
+
+            }
+
+           
+
+        }
+
+
+        return $resStr;
+    }
+
+
 }
 ?>

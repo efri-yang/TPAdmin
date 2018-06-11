@@ -52,6 +52,13 @@ class Tree {
         //获取传进来节点的所有子元素(例如传进来的是0，那么表示获取所有根节点元素)
         //取得树形结构数据
         $resData=self::hTree($data,$pid);
+//        print_r($resData);
+
+        foreach ($resData as $k => $v){
+            //根据层级设置level
+            extract($v);
+
+        }
 
 
 

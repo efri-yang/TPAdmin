@@ -23,17 +23,20 @@ class AdminMenu extends Base {
 
 
         $strTpl='<tr>';
-        $strTpl.='<td class="align-l">系统设置</td>';
-        $strTpl.='<td class="align-l">系统设置</td>';
-        $strTpl.='<td>系统设置</td>';
-        $strTpl.='<td>系统设置</td>';
-        $strTpl.='<td>系统设置</td>';
+        $strTpl.='<td>\$id</td>';
+        $strTpl.='<td class="align-l">\$title</td>';
+        $strTpl.='<td class="align-l">\$url</td>';
+        $strTpl.='<td>\<0parent_id></0parent_id></td>';
+        $strTpl.='<td><i class="iconfont \$icon"></i>\$icon</td>';
+        $strTpl.='<td>\$status</td>';
+        $strTpl.='<td>\$log_type</td>';
+        $strTpl.='<td><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">删除</a><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">修改</a></td>';
         $strTpl.='</tr>';
 
 
 
 
-        $tree->getTree($result,0);
+        $tree->getTree($result,0,$strTpl);
 
 
 

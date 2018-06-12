@@ -1,35 +1,20 @@
 <?php
-class A {
-    public $foo = 1;
-} 
+class Person {
+    private $_data = array();
+    public function __get($property) {
+        echo "__get";
 
-$a = new A;
-$b = $a;
+    }
 
-
-$b->foo = 2;
-echo $a->foo."\n";
-
-
-
-$c = new A;
-$d = &$c;    // $c ,$d是引用
-             // ($c,$d) = <id>
-
-$d->foo = 2;
-echo $c->foo."\n";
-
-
-$e = new A;
-
-function foo($obj) {
-    // ($obj) = ($e) = <id>
-    $obj->foo = 2;
+    public function __set($property, $value) {
+        echo "_set";
+        $this->_data[$property] = $value;
+    }
 }
 
-foo($e);
-echo $e->foo."\n";
+$p1 = new Person();
+$p1->age = 30;
 
-
+$p1->age;
 
 ?>

@@ -48,52 +48,33 @@ class Tree2 {
      * $tplStr  [字符串]       模板字符串
      * $resStr [字符串] 返回的字符串
      */
-    
-    public function getTree($data,$tplStr="",$selectId="",$resStr="",$level=0){
-        $num=0;
-        $total=count($data);
-        $selected="";
-        $space="";
 
-
-        if($level !=0 && count($data)){
-
-             
-
-             echo "ASdfasdfasdf";
-
+    public function getTree($data, $tplStr = "", $selectId = "", $resStr = "", $level = 0) {
+        $total = count($data);
+        $selected = "";
+        $space = "";
+        if ($level == 0) {
+            $seat = "";
+        } else {
+            $seat = "|—";
         }
-$level++;
-
+        $level++;
+        $space = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $level - 1) . $seat;
         foreach ($data as $k => $v) {
             //证明了第一层级
-            
-           
-            
-            if($k==$selectId){
-                $selected="selected";
+            if ($k == $selectId) {
+                $selected = "selected";
             }
             //有子元素
-            
-            $space=str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;",$level);
-
             extract($v);
             eval("\$nstr = \"$tplStr\";");
-            $resStr.=$nstr;
-            if(count($v["sub"])){
-              echo $level;
-                $resStr=$this->getTree($v["sub"],$tplStr,$selectId,$resStr,$level);
-
+            $resStr .= $nstr;
+            if (count($v["sub"])) {
+                $resStr = $this->getTree($v["sub"], $tplStr, $selectId, $resStr, $level);
             }
-
-           
-
         }
-
-
         return $resStr;
     }
-
 
 }
 ?>

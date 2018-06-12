@@ -1,20 +1,32 @@
 <?php
-class Person {
-    private $_data = array();
-    public function __get($property) {
-        echo "__get";
-
-    }
-
-    public function __set($property, $value) {
-        echo "_set";
-        $this->_data[$property] = $value;
-    }
+class Address{
+	protected $city;
+	public function setCity($city){
+		$this->city=$city;
+	}
+	public function getCity(){
+		return $this->city;
+	}
 }
 
-$p1 = new Person();
-$p1->age = 30;
+class Person {
+	protected $name;
+	protected $address;
+	public function __construct(){
+		$this->address=new Address();
+	}
+	public function setName($name){
+		$this->name=$name;
+	}
+	public function getName(){
+		return $this->name;
+	}
 
-$p1->age;
+	public function __call($method,$arguments){
+		if(method_exists($this->address,$method)){
+			return call_user_func_array(function, param_arr)
+		}
+	}
+}
 
 ?>

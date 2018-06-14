@@ -21,7 +21,7 @@ var $defaultNoPic=$("#J_no-pic");
     swf: './plugin/webuploader-0.1.5/Uploader.swf',
      //限制文件的大小
      fileSingleSizeLimit: 2 * 1024 * 1024,
-     fileNumLimit: 1,
+     fileNumLimit: 3,
      fileSizeLimit: 4 * 1024 * 1024
  });
 console.dir(uploader);
@@ -123,16 +123,15 @@ uploader.state = 'pedding';
 
      $delBtnElem.on("click", function(event) {
          event.preventDefault();
-         uploader.removeFile(file, true);
-         console.dir(uploader.getFiles("inited"));
-         console.dir(uploader.getFiles("cancelled"));
+         uploader.removeFile(file,true);
+        
          
 
      });
 
      $uploadElem.on("click",function(event){
         event.preventDefault();
-        uploader.upload();
+        uploader.upload(file);
      });
 
      //点击参数按钮以后要删除远程服务端的地址
@@ -154,9 +153,14 @@ uploader.state = 'pedding';
                     if(data==1){
                         $li.remove();
                         showError("删除成功！");
-                        $defaultNoPic.show();
-                        uploader.removeFile( file);
+                      
+                        uploader.removeFile(file,true);
                         $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
+
+                        var files=uploader.getFiles("inited","queued","complete","error","invalid","cancelled");
+         if(!files.length){
+            $defaultNoPic.show();
+         }
                     }
             }
 
@@ -269,15 +273,16 @@ uploader.state = 'pedding';
          $(uploader.options.pick.id).removeClass("disabled");
          $(uploader.options.pick.id).siblings(".mask").hide();
      }
-     
  });
 
  function removeFile(file) {
      var $li = $('#' + file.id);
      delete uploader.percentages[file.id];
      $li.remove();
-     if(!uploader.percentages.length){
-        $defaultNoPic.show();
+     var files=uploader.getFiles("inited","queued","complete","error","invalid","cancelled");
+     
+     if(!files.length){
+            $defaultNoPic.show();
      }
      
  }
@@ -331,13 +336,19 @@ uploader.state = 'pedding';
      // console.dir(uploader.getFiles("complete"))
      $("#" + file.id).attr("data-url", response);
 
-      $("#" + file.id).find(".success-del").show();
+      
  });
 
  uploader.on("uploadComplete", function(file, response) {
      // console.group("触发了：uploadComplete");
      // console.dir(uploader.getFiles("progress"));
      // console.dir(uploader.getFiles("error"))
+     // 
+     var $li = $('#' + file.id);
+     $li.find(".progressing").hide();
+    $li.find(".success-del").show();
+
+
  });
 
  uploader.on("uploadFinished", function(file, response) {

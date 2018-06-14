@@ -66,7 +66,7 @@ uploader.state = 'pedding';
         '</div>'+
         '<p class="progressing"><span style="width:0;"></span></p>'+
         '<span class="error">上传失败</span>'+
-        '<span class="success-del"></span>'+
+        '<span class="success-del"><i class="iconfont icon-shanchu"></i></span>'+
         '<span class="success"></span>'+
         '</li>';
      var $li = $(str);
@@ -138,14 +138,26 @@ uploader.state = 'pedding';
      //点击参数按钮以后要删除远程服务端的地址
      $successDelBtnElem.on("click",function(event){
         event.preventDefault();
+        var $li=$("#"+file.id);
+         var url=$li.data("url");
+        var index=url.lastIndexOf("/");
+       
+         var imgName=url.slice(index+1);
+    
 
         $.ajax({
-            url:"../php/delfile.php",
+            url:"./php/delfile.php",
             type:"post",
-            data:{filename},
+            data:{filename:imgName},
             dataType:"json",
             success:function(data){
-
+                    if(data==1){
+                        $li.remove();
+                        showError("删除成功！");
+                        $defaultNoPic.show();
+                        uploader.removeFile( file);
+                        $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
+                    }
             }
 
         })
@@ -154,11 +166,7 @@ uploader.state = 'pedding';
 
  }
 
- var url="http://localhost/MyProject/src/MyPhpCms/TPAdmin/public/static/upload/IMG_5780.JPG";
-        var index=url.lastIndexOf("/");
-       
-    var str2=url.slice(index+1);
-    alert(str2);
+
 
 
 

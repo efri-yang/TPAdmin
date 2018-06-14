@@ -156,8 +156,9 @@ uploader.state = 'pedding';
 
  var url="http://localhost/MyProject/src/MyPhpCms/TPAdmin/public/static/upload/IMG_5780.JPG";
         var index=url.lastIndexOf("/");
-        alert(index)
-
+       
+    var str2=url.slice(index+1);
+    alert(str2);
 
 
 

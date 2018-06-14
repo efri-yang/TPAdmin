@@ -1,0 +1,86 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="pl30 pr30 mt20">
+        <div class="coms-table-wrap">
+            <div class="coms-table-hd clearfix no-border">
+                <div class="am-form am-form-horizontal fl">
+                    <div class="am-form-group fl">
+                        <div class="am-para-inline w150 mr10">
+                            <select required="" name="province">
+                                <option value="0">全部日期</option>
+                                <option value="option1">日期01</option>
+                                <option value="option2">日期02</option>
+                                <option value="option3">日期03</option>
+                            </select>
+                        </div>
+                        <div class="am-para-inline w150 mr10">
+                            <select required="" name="province">
+                                <option value="0">所有分类</option>
+                                <option value="option1">分类01</option>
+                                <option value="option2">分类02</option>
+                                <option value="option3" disabled="">选项三........</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="am-form-group fl ml20">
+                        <button type="button" class="am-btn am-btn-success w100">搜索</button>
+                    </div>
+                </div>
+                <a href="{:url('add')}" class="am-btn am-btn-success w100 fr">添加文章</a>
+            </div>
+            <div class="coms-table-bd mt20">
+                <table class="am-table am-table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="8%"><span>ID</span></th>
+                            <th width="32%"><span>标题</span></th>
+                            <th width="10%"><span>作者</span></th>
+                            <th width="10%"><span>分类</span></th>
+                            <th width="10%"><span>评论</span></th>
+                            <th width="10%"><span>日期</span></th>
+                            <th><span>操作</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>标题01010101010101</td>
+                            <td>散崖</td>
+                            <td>前端开发、JS</td>
+                            <td><a href="#">10</a></td>
+                            <td>2017-02-09</td>
+                            <td>
+                                <a href="#" class="am-btn am-btn-xs am-btn-danger">删除</a>
+                                <a href="#" class="am-btn am-btn-xs am-btn-default">编辑</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>标题01010101010101</td>
+                            <td>散崖</td>
+                            <td>前端开发、JS</td>
+                            <td><a href="#">10</a></td>
+                            <td>2017-02-09</td>
+                            <td>
+                                <a href="#" class="am-btn am-btn-xs am-btn-danger">删除</a>
+                                <a href="#" class="am-btn am-btn-xs am-btn-default">编辑</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>标题01010101010101</td>
+                            <td>散崖</td>
+                            <td>前端开发、JS</td>
+                            <td><a href="#">10</a></td>
+                            <td>2017-02-09</td>
+                            <td>
+                                <a href="#" class="am-btn am-btn-xs am-btn-danger">删除</a>
+                                <a href="#" class="am-btn am-btn-xs am-btn-default">编辑</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

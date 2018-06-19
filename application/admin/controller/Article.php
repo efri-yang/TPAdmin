@@ -4,6 +4,7 @@ use app\admin\common\Auth;
 use think\Controller;
 use think\Db;
 use think\Session;
+use app\admin\common\Tree2;
 
 /**
  * Index 和 Base（Index extends Base），都有定义 __construct，那么执行 Index里面的__construct(_initialize 则都没作用)
@@ -18,6 +19,12 @@ class Article extends Base {
     }
 
     public function add() {
+        echo $this->webData["menu_id"];
+        $tree2=new Tree2();
+        $tplFenLei='<option value="\menu_id">\title</option>';
+        return $this->fetch();
+    }
+     public function addDo() {
         return $this->fetch();
     }
 

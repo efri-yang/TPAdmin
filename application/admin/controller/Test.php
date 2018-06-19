@@ -38,8 +38,14 @@ class Test extends Controller {
             "strSelect" => $strSelect,
         ]);
 
+
+
         return $this->fetch("index");
 
+    }
+
+    PUBLIC function test(){
+        echo 
     }
 }
 ?>

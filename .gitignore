@@ -6,5 +6,5 @@ thinkphp
 vendor
 pdf
 runtime
-public/static/upload/
-public/static/upload_tmp/
+public/static/upload
+public/static/upload_tmp

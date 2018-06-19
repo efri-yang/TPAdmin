@@ -4,6 +4,7 @@
 
 
  var uploader = WebUploader.create({
+    
      pick: {
          id: '#filePicker',
          label: '点击上传本地头像'
@@ -334,6 +335,8 @@
      // console.dir(uploader.getFiles("progress"));
      // console.dir(uploader.getFiles("complete"))
      $("#" + file.id).attr("data-url", response);
+   
+     $("#J_covering").val(response);
 
 
  });

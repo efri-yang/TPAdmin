@@ -53,8 +53,10 @@ class Base extends Controller {
             //获取当前url对应的menu的信息数组
             $currentMenuInfo = $this->getCurrentMenuInfo();
 
+
             //当前url的menu_id(来判断左侧菜单栏显示哪个项)
             $currentMenuId = $currentMenuInfo['menu_id'];
+           
             $this->menuList = Db::table("think_admin_menus")->where('status', 1)->select();
 
             //获取侧边栏目录结构数据
@@ -89,6 +91,7 @@ class Base extends Controller {
         if (is_array($menuList)) {
             foreach ($menuList as $key => $value) {
                 if ($value['menu_id'] == $currentNavId) {
+                    $this->webData["menu_id"]=$value['menu_id'];
                     if (!$navStr) {
                         $bread = '<li class="am-active">' . $value["title"] . '</li>';
                     } else {
@@ -125,6 +128,7 @@ class Base extends Controller {
     }
 
     protected function getCurrentMenuInfo() {
+
         return Db::name('admin_menus')->where(['url' => $this->urlMCA])->find();
     }
 }

@@ -54,10 +54,10 @@ if (!empty($_REQUEST['debug'])) {
 // Settings
 // $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
 // 虚拟文件存放的目录
-$targetDir = '../upload_tmp';
+$targetDir = $_SERVER['DOCUMENT_ROOT'].'Upload/image/ueditor/'.date("Ymd");
 
 //文件上传后的目录
-$uploadDir = '../upload/';
+$uploadDir = $_SERVER['DOCUMENT_ROOT'].'Upload/image/ueditor/'.date("Ymd");
 
 $cleanupTargetDir = false; // Remove old files
 $maxFileAge = 5 * 3600; // Temp file age in seconds
@@ -83,9 +83,12 @@ if (isset($_REQUEST["name"])) {
 }
 
 $oldName = $fileName;
+$ext=@strtolower(end(explode(".",$fileName)));
+$uniName=md5(uniqid(microtime(true),true)).".".$ext;
+
 
 $filePath = $targetDir . DIRECTORY_SEPARATOR . $fileName;
-$uploadPath = $uploadDir . DIRECTORY_SEPARATOR . $fileName;
+$uploadPath = $uploadDir . DIRECTORY_SEPARATOR . $uniName;
 //DIRECTORY_SEPARATOR>\  就是反斜杠的意思
 // Chunking might be enabled
 // 获取变量的整数值
@@ -183,7 +186,7 @@ if ($done) {
     $response = [
         'success' => true,
         'oldName' => $oldName,
-        'filePath' => "http://localhost/MyProject/src/MyPhpCms/TPAdmin/public/static/upload/" . $fileName,
+        'filePath' => "http://localhost/".'Upload/image/ueditor/'.date("Ymd"). "/".$uniName,
         'fileSize' => $_REQUEST['size'],
         'fileSuffixes' => $pathInfo['extension'],
         'file_id' => $_REQUEST['id'],

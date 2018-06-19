@@ -1,6 +1,5 @@
- 
-var $uploadfileUL=$("#J_uploader-list");
-var $defaultNoPic=$("#J_no-pic");
+ var $uploadfileUL = $("#J_uploader-list");
+ var $defaultNoPic = $("#J_no-pic");
 
 
 
@@ -17,19 +16,19 @@ var $defaultNoPic=$("#J_no-pic");
          extensions: 'gif,jpg,bmp,png',
          mimeTypes: 'image/jpg,image/jpeg,image/png'
      },
-    server: './php/fileupload.php',
-    swf: './plugin/webuploader-0.1.5/Uploader.swf',
+     server: '/MyProject/src/MyPhpCms/TPAdmin/public/static/php/fileupload.php',
+     swf: '/MyProject/src/MyPhpCms/TPAdmin/public/static/js/plugin/webuploader-0.1.5/Uploader.swf',
      //限制文件的大小
      fileSingleSizeLimit: 2 * 1024 * 1024,
-     fileNumLimit: 3,
+     fileNumLimit:1,
      fileSizeLimit: 4 * 1024 * 1024
  });
-console.dir(uploader);
-uploader.percentages = {};
-uploader.fileSize = 0;
-uploader.fileCount = 0;
+ console.dir(uploader);
+ uploader.percentages = {};
+ uploader.fileSize = 0;
+ uploader.fileCount = 0;
 
-uploader.state = 'pedding';
+ uploader.state = 'pedding';
 
  //显示错误函数
  function showError(txt) {
@@ -58,28 +57,28 @@ uploader.state = 'pedding';
  //添加li
  function addFile(file) {
      var str = '<li id="' + file.id + '">' +
-        '<div class="img-wrap preview"><span class="txt-1">预览中...</span><img src="" class="img-upload"></div>'+
+         '<div class="img-wrap preview"><span class="txt-1">预览中...</span><img src="" class="img-upload"></div>' +
 
-        '<div class="handle-bar">'+
-            '<span class="del-btn">删除</span>'+
-            '<span class="upload-btn">上传</span>'+
-        '</div>'+
-        '<p class="progressing"><span style="width:0;"></span></p>'+
-        '<span class="error">上传失败</span>'+
-        '<span class="success-del"><i class="iconfont icon-shanchu"></i></span>'+
-        '<span class="success"></span>'+
-        '</li>';
+         '<div class="handle-bar">' +
+         '<span class="del-btn">删除</span>' +
+         '<span class="upload-btn">上传</span>' +
+         '</div>' +
+         '<p class="progressing"><span style="width:0;"></span></p>' +
+         '<span class="error">上传失败</span>' +
+         '<span class="success-del"><i class="iconfont icon-shanchu"></i></span>' +
+         '<span class="success"></span>' +
+         '</li>';
      var $li = $(str);
      $uploadfileUL.append($li);
 
-     var $imgWrap=$li.find(".img-wrap");
-     var $handBar=$li.find(".handle-bar");
+     var $imgWrap = $li.find(".img-wrap");
+     var $handBar = $li.find(".handle-bar");
      var $prewTxtElem = $imgWrap.children('.txt-1');
-     var $imgElem =$imgWrap.children(".img-upload");
-     
+     var $imgElem = $imgWrap.children(".img-upload");
+
      var $delBtnElem = $li.find(".del-btn");
      var $successDelBtnElem = $li.find(".success-del");
-     var $uploadElem=$li.find(".upload-btn");
+     var $uploadElem = $li.find(".upload-btn");
      var $successElem = $li.find(".success");
      var $progressElem = $li.find(".progressing");
      var $errorElem = $li.find(".error");
@@ -123,52 +122,52 @@ uploader.state = 'pedding';
 
      $delBtnElem.on("click", function(event) {
          event.preventDefault();
-         uploader.removeFile(file,true);
-        
-         
+         uploader.removeFile(file, true);
+
+
 
      });
 
-     $uploadElem.on("click",function(event){
-        event.preventDefault();
-        uploader.upload(file);
+     $uploadElem.on("click", function(event) {
+         event.preventDefault();
+         uploader.upload(file);
      });
 
      //点击参数按钮以后要删除远程服务端的地址
-     $successDelBtnElem.on("click",function(event){
-        event.preventDefault();
-        var $li=$("#"+file.id);
-         var url=$li.data("url");
-        var index=url.lastIndexOf("/");
-       
-         var imgName=url.slice(index+1);
-    
+     $successDelBtnElem.on("click", function(event) {
+         event.preventDefault();
+         var $li = $("#" + file.id);
+         var url = $li.data("url");
 
-        $.ajax({
-            url:"./php/delfile.php",
-            type:"post",
-            data:{filename:imgName},
-            dataType:"json",
-            success:function(data){
-                    if(data==1){
-                        $li.remove();
-                        showError("删除成功！");
-                      
-                        uploader.removeFile(file,true);
-                        $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
+         if (!!url) {
+             var index = url.lastIndexOf("/");
+             var imgName = url.slice(index + 1);
+             $.ajax({
+                 url: "/MyProject/src/MyPhpCms/TPAdmin/public/static/php/delfile.php",
+                 type: "post",
+                 data: { filename: imgName },
+                 dataType: "json",
+                 success: function(data) {
+                     if (data == 1) {
+                         $li.remove();
+                         showError("删除成功！");
+                         uploader.removeFile(file, true);
+                         $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
 
-                        var files=uploader.getFiles("inited","queued","complete","error","invalid","cancelled");
-         if(!files.length){
-            $defaultNoPic.show();
-         }
-                    }
-            }
+                         
+                     }
+                 }
 
-        })
-        
+             })
+         } else {
+             uploader.removeFile(file, true);
+             
+         } 
      })
 
  }
+
+
 
 
 
@@ -180,12 +179,12 @@ uploader.state = 'pedding';
      if (val === uploader.state) {
          return;
      }
-     
+
      uploader.state = val;
      switch (uploader.state) {
          case 'ready': //选完图片以后
              uploader.refresh();
-             
+
 
              break;
          case 'pedding':
@@ -193,11 +192,11 @@ uploader.state = 'pedding';
              break;
          case 'uploading':
              //上传进度条要显示，上传按钮要隐藏，继续添加按钮要隐藏
-           
-            
+
+
              break;
          case 'paused':
-            
+
              break;
          case 'confirm':
              //上传进度条要隐藏
@@ -208,11 +207,11 @@ uploader.state = 'pedding';
              }
              break;
          case 'finish':
-            
+
              break;
 
      }
-    
+
  }
 
  function closeLayer() {
@@ -238,12 +237,12 @@ uploader.state = 'pedding';
      } else {
          uploader.fileCount++;
          uploader.fileSize += file.size;
-         if (uploader.fileCount > 0) { 
+         if (uploader.fileCount > 0) {
              uploader.refresh();
          }
 
          //上传个数大于限定的个数 按钮禁用
-         if(uploader.fileCount >=uploader.options.fileNumLimit){
+         if (uploader.fileCount >= uploader.options.fileNumLimit) {
              $(uploader.options.pick.id).addClass("disabled");
              $(uploader.options.pick.id).siblings(".mask").show();
          }
@@ -251,7 +250,7 @@ uploader.state = 'pedding';
          $defaultNoPic.hide();
          addFile(file);
          setState('ready');
-         
+
      }
 
  });
@@ -269,7 +268,7 @@ uploader.state = 'pedding';
      }
      removeFile(file);
 
-     if(uploader.fileCount <uploader.options.fileNumLimit){
+     if (uploader.fileCount < uploader.options.fileNumLimit) {
          $(uploader.options.pick.id).removeClass("disabled");
          $(uploader.options.pick.id).siblings(".mask").hide();
      }
@@ -279,12 +278,12 @@ uploader.state = 'pedding';
      var $li = $('#' + file.id);
      delete uploader.percentages[file.id];
      $li.remove();
-     var files=uploader.getFiles("inited","queued","complete","error","invalid","cancelled");
-     
-     if(!files.length){
-            $defaultNoPic.show();
+     var files = uploader.getFiles("inited", "queued", "complete", "error", "invalid");
+
+     if (!files.length) {
+         $defaultNoPic.show();
      }
-     
+
  }
 
 
@@ -294,9 +293,9 @@ uploader.state = 'pedding';
      // console.dir(uploader.getFiles("inited"))
      // console.dir(uploader.getFiles("queued"))
      setState('uploading');
-       var $li = $('#' + file.id);
-      var $handBar = $li.find('.handle-bar');
-      $handBar.hide();
+     var $li = $('#' + file.id);
+     var $handBar = $li.find('.handle-bar');
+     $handBar.hide();
  });
 
  uploader.on("stopUpload", function(file, data) {
@@ -309,7 +308,7 @@ uploader.state = 'pedding';
  uploader.on("uploadBeforeSend", function(file) {
      // console.group("触发了：uploadBeforeSend事件");
 
-    
+
  });
  uploader.on("uploadProgress", function(file, percentage) {
 
@@ -321,7 +320,7 @@ uploader.state = 'pedding';
 
      $percent.css('width', percentage * 100 + '%');
      uploader.percentages[file.id][1] = percentage;
-     
+
 
  });
 
@@ -336,7 +335,7 @@ uploader.state = 'pedding';
      // console.dir(uploader.getFiles("complete"))
      $("#" + file.id).attr("data-url", response);
 
-      
+
  });
 
  uploader.on("uploadComplete", function(file, response) {
@@ -346,7 +345,7 @@ uploader.state = 'pedding';
      // 
      var $li = $('#' + file.id);
      $li.find(".progressing").hide();
-    $li.find(".success-del").show();
+     $li.find(".success-del").show();
 
 
  });
@@ -378,16 +377,16 @@ uploader.state = 'pedding';
  });
 
  //*****点击上传按钮**************************************************
-//  $uploadBtn.on("click", function(event) {
-//      event.preventDefault();
-//      if ($(this).hasClass('disabled')) {
-//          return false;
-//      }
-//      if (uploader.state === 'ready') {
-//          uploader.upload();
-//      } else if (uploader.state === 'paused') {
-//          uploader.upload();
-//      } else if (uploader.state === 'uploading') {
-//          uploader.stop();
-//      }
-// });
+ //  $uploadBtn.on("click", function(event) {
+ //      event.preventDefault();
+ //      if ($(this).hasClass('disabled')) {
+ //          return false;
+ //      }
+ //      if (uploader.state === 'ready') {
+ //          uploader.upload();
+ //      } else if (uploader.state === 'paused') {
+ //          uploader.upload();
+ //      } else if (uploader.state === 'uploading') {
+ //          uploader.stop();
+ //      }
+ // });

@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use app\admin\common\Auth;
 use think\Controller;
+use think\Db;
 use think\Session;
 
 /**
@@ -22,6 +23,10 @@ class Article extends Base {
 
     public function list() {
         return $this->fetch();
+    }
+    public function tagList() {
+        $resData = Db::table("think_tag")->field('id,name')->select();
+        return $resData;
     }
 }
 ?>

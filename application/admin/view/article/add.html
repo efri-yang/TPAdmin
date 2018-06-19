@@ -11,25 +11,65 @@
             <div class="am-form-group">
                 <label class="am-para-label">标题：</label>
                 <div class="am-para-input">
-                    <input type="text" minlength="3" placeholder="请输入标题"  required />
+                    <input type="text" minlength="3" placeholder="请输入标题" required />
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label">标签：</label>
                 <div class="am-para-input">
-                    <a href="#" class="am-btn am-btn-success am-round">添加标签</a>
+                    <style type="text/css">
+                    .tag-list {
+                        margin-right: 30px;
+                    }
+
+                    .tag-list li {
+                        position: relative;
+                        margin-right: 20px;
+                    }
+
+                    .tag-list li span {
+                        position: absolute;
+                        right: -9px;
+                        top: -9px;
+                        width: 20px;
+                        height: 20px;
+                        background: rgba(0, 0, 0, 0.8);
+                        border-radius: 100%;
+                    }
+
+                    .tag-list li span i {
+                        font-size: 12px;
+                    }
+                    </style>
+                    <ul class="tag-list fl" id="J_tag-list-choice">
+                        
+                        
+                    </ul>
+                    <a href="#" class="am-btn am-btn-success am-round" id="J_choice-tag-btn">选择标签</a>
+                    <a href="#" class="am-btn am-btn-success am-round" id="J_add-tag-btn">添加标签</a>
+                    <input type="hidden" name="tags" id="J_ipt-tags">
+                    <input type="hidden" name="tagid" id="J_ipt-tagid">
                 </div>
             </div>
             <div class="am-form-group">
-				<label class="am-para-label">封面图片</label>
-				<div class="am-para-input">
-                    
+                <label class="am-para-label">文章缩略图:</label>
+                <div class="am-para-input">
+                    <div class="coms-upload-single-box">
+                        <div class="no-pic" id="J_no-pic"></div>
+                        <ul class="uploading-img-list clearfix" id="J_uploader-list">
+                        </ul>
+                        <div class="upload-btn-group clearfix">
+                            <span class="mask"></span>
+                            <div id="filePicker" class="filepicker-container"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="coverimg" id="J_covering" />
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label">关键词：</label>
                 <div class="am-para-input">
-                    <input type="text" minlength="3" placeholder="请输入关键词"  required />
+                    <input type="text" minlength="3" placeholder="请输入关键词" required />
                 </div>
             </div>
             <div class="am-form-group">
@@ -38,59 +78,168 @@
                     <textarea class="" rows="3" id="doc-ta-1"></textarea>
                 </div>
             </div>
-            
             <div class="am-form-group">
                 <label class="am-para-label">作者：</label>
                 <div class="am-para-input">
-                   <input type="text" minlength="3" placeholder="请输入作者"  required />
+                    <input type="text" minlength="3" placeholder="请输入作者" required />
                 </div>
             </div>
-
             <div class="am-form-group">
                 <label class="am-para-label">内容：</label>
                 <div class="am-para-input">
                     <script id="container" name="content" type="text/plain"></script>
-
-                </div>
-            </div>
-			<div class="am-form-group">
-                <label class="am-para-label">是否评论：</label>
-                <div class="am-para-input">
-                	<label class="am-radio-inline">
-				        <input type="radio" checked  value="0" name="iscomment">是
-				    </label>
-                    <label class="am-radio-inline">
-				        <input type="radio" value="0" name="iscomment">否
-				    </label>
-				    
                 </div>
             </div>
             <div class="am-form-group">
-                <label class="am-para-label">是否置顶：</label>
+                <label class="am-para-label">是否评论：</label>
                 <div class="am-para-input">
-                	<label class="am-radio-inline">
-				        <input type="radio"  value="0" name="stick">是
-				    </label>
                     <label class="am-radio-inline">
-				        <input type="radio" checked value="0" name="stick">否
-				    </label>
-				    
+                        <input type="radio" checked value="0" name="iscomment">是
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" value="0" name="iscomment">否
+                    </label>
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label"></label>
                 <div class="am-para-input">
-						<input type="submit" value="提交" class="am-btn am-btn-success" />
+                    <input type="submit" value="提交" class="am-btn am-btn-success" />
                 </div>
             </div>
-
         </div>
     </div>
 </div>
+<style type="text/css">
+.taglist-dialog {
+    display: none;
+    padding: 20px;
+}
 
+.taglist-dialog ul li {
+    margin: 0 8px;
+    position: relative;
+}
 
+.taglist-dialog ul li span {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    right: -9px;
+    top: -9px;
+    overflow: hidden;
+    border-radius: 100%;
+    display: none;
+}
+
+.taglist-dialog ul li span i {
+    color: #fff;
+}
+
+.taglist-dialog ul li.selected span {
+    display: block;
+}
+</style>
+<div class="taglist-dialog" id="J_taglist-dialog">
+    <ul id="J_taglist">
+    </ul>
+</div>
 <script type="text/javascript" src="__STATIC__/js/plugin/ueditor1_4_3/ueditor.config.js"></script>
 <script type="text/javascript" src="__STATIC__/js/plugin/ueditor1_4_3/ueditor.all.js"></script>
+<script type="text/javascript" src="__STATIC__/js/plugin/webuploader-0.1.5/webuploader.min.js"></script>
+<link rel="stylesheet" type="text/css" href="__STATIC__js/plugin/webuploader-0.1.5/webuploader.css" />
+
+<script type="text/javascript" src="__STATIC__/js/webupload.js"></script>
 <script type="text/javascript">
-     var ue = UE.getEditor('container');
+var ue = UE.getEditor('container');
+</script>
+<script type="text/javascript">
+$(function() {
+    //添加标签
+
+    var tagData;
+
+
+    function renderAppend(data) {
+        var str = "";
+        $.each(data, function(index, obj) {
+            str += '<li class="am-btn am-btn-default ' + (obj.selected ? "selected" : "") + '">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
+        });
+        $("#J_taglist").html(str);
+    }
+
+    function openChoiceDialg() {
+        layer.open({
+            type: 1,
+            shade: false,
+            area: '400px',
+            content: $("#J_taglist-dialog"),
+            btn: ['插入', '取消'],
+            yes: function() {
+                addTag(tagData);
+                layer.closeAll();
+            }
+        })
+    }
+    $("#J_choice-tag-btn").on("click", function(event) {
+        event.preventDefault();
+        if (!!tagData && tagData.length) {
+            renderAppend(tagData);
+            openChoiceDialg();
+        } else {
+            $.ajax({
+                url: "{:url('tagList')}",
+                type: "post",
+                data: {},
+                dataType: "json",
+                success: function(data) {
+                    if (!!data.length) {
+                        tagData = data;
+                        renderAppend(tagData);
+                        openChoiceDialg();
+                    }
+                }
+            })
+        }
+
+    })
+    $("#J_taglist").on("click", "li", function() {
+        var $this = $(this);
+        var index = $("#J_taglist").children().index(this);
+
+        if ($this.hasClass('selected')) {
+            $this.removeClass('selected');
+            tagData[index].selected = false;
+        } else {
+            $this.addClass('selected');
+            tagData[index].selected = true;
+        }
+    });
+
+    $("#J_tag-list-choice").on("click","span",function(){
+        var $li=$(this).parent();
+        var index=$li.data("index");
+        tagData[index].selected=false;
+        addTag(tagData);
+    })
+
+    function addTag(data) {
+        var str="";
+        var tagStr=[];
+        var tagId=[];
+        var $container=$("#J_tag-list-choice");
+        $.each(data, function(index, obj) {
+            if(!!obj.selected){
+                tagStr.push(obj.name);
+                tagId.push(obj.id)
+                str+='<li class="am-btn am-btn-primary" data-index="'+index+'">'+obj.name+'<span><i class="iconfont icon-shanchu"></i></span></li>';
+            }
+        });
+        $container.html(str);
+        $("#J_ipt-tags").val(tagStr.join(","));
+        $("#J_ipt-tagid").val(tagId.join(","));
+
+    }
+})
 </script>

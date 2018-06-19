@@ -19,13 +19,31 @@ class Article extends Base {
     }
 
     public function add() {
-        echo $this->webData["menu_id"];
+        //这个是有问题的，假设有子集的时候
+        $data=Db::table("think_admin_menus")->select();
         $tree2 = new Tree2();
+        $realData=array();
+        $realData=$tree2::hTree($data,$this->webData["parent_id"]);
+        print_r($realData);
+
+        
+        foreach ($data as $key => $value) {
+            if(!strrpos($value["url"],"add") && !strrpos($value["url"],"articlelist")){
+                $realData[]=$value;
+            }
+        }
+
+        
+
+        $realData=$tree2::sort($realData,"sort_id");
+
+       
+
+
 
         $tplFenLei = '<option value="\menu_id">\title</option>';
 
-
-        $tplStr=$tree2
+        
         return $this->fetch();
     }
     public function addDo() {
@@ -33,6 +51,7 @@ class Article extends Base {
     }
 
     public function articlelist() {
+       echo $this->webData["parent_id"];
         return $this->fetch();
     }
     public function tagList() {

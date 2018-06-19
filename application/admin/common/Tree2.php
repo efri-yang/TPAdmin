@@ -13,7 +13,6 @@ class Tree2 {
         if (isset($sort)) {
             array_multisort($sort, SORT_DESC, $arr);
         }
-
         return $arr;
     }
     /**

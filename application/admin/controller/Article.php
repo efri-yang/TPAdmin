@@ -21,8 +21,8 @@ class Article extends Base {
         return $this->fetch();
     }
 
-    public function list() {
-        return $this->fetch();
+    public function articlelist() {
+      return $this->fetch();
     }
     public function tagList() {
         $resData = Db::table("think_tag")->field('id,name')->select();

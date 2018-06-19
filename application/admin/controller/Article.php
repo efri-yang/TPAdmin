@@ -1,10 +1,10 @@
 <?php
 namespace app\admin\controller;
 use app\admin\common\Auth;
+use app\admin\common\Tree2;
 use think\Controller;
 use think\Db;
 use think\Session;
-use app\admin\common\Tree2;
 
 /**
  * Index 和 Base（Index extends Base），都有定义 __construct，那么执行 Index里面的__construct(_initialize 则都没作用)
@@ -20,16 +20,20 @@ class Article extends Base {
 
     public function add() {
         echo $this->webData["menu_id"];
-        $tree2=new Tree2();
-        $tplFenLei='<option value="\menu_id">\title</option>';
+        $tree2 = new Tree2();
+
+        $tplFenLei = '<option value="\menu_id">\title</option>';
+
+
+        $tplStr=$tree2
         return $this->fetch();
     }
-     public function addDo() {
+    public function addDo() {
         return $this->fetch();
     }
 
     public function articlelist() {
-      return $this->fetch();
+        return $this->fetch();
     }
     public function tagList() {
         $resData = Db::table("think_tag")->field('id,name')->select();

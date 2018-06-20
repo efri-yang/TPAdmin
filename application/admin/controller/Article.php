@@ -4,7 +4,9 @@ use app\admin\common\Auth;
 use app\admin\common\Tree2;
 use think\Controller;
 use think\Db;
+use think\Paginator;
 use think\Session;
+use think\Validate;
 
 /**
  * Index 和 Base（Index extends Base），都有定义 __construct，那么执行 Index里面的__construct(_initialize 则都没作用)
@@ -20,43 +22,124 @@ class Article extends Base {
 
     public function add() {
         //这个是有问题的，假设有子集的时候
-        $data=Db::table("think_admin_menus")->select();
-        $tree2 = new Tree2();
-        $realData=array();
-        $realData=$tree2::hTree($data,$this->webData["parent_id"]);
-        print_r($realData);
+        if ($this->request->isPost()) {
+            $params = $this->request->param();
+            $result = $this->validate($params, 'ArticleAdd');
+            date_default_timezone_set('PRC');
+            if (true !== $result) {
+                Session::set('form_info', $params);
+                $this->error($result, "add");
+            } else {
+                //验证通过以后就插入到数据库中
 
-        
-        foreach ($data as $key => $value) {
-            if(!strrpos($value["url"],"add") && !strrpos($value["url"],"articlelist")){
-                $realData[]=$value;
+                $insertData = [
+                    'classifyid' => $params["classifyid"],
+                    'title' => $params["title"],
+                    'keyword' => $params["keyword"],
+                    'description' => $params["description"],
+                    'coverimg' => $params['coverimg'],
+                    'content' => addslashes($params['content']),
+                    'author' => $params["author"],
+                    'tags' => $params["tags"],
+                    'tagid' => $params["tagid"],
+                    'iscomment' => $params["iscomment"],
+                    'create_time' => time(),
+                ];
+                $insertResult = Db::table('think_article')->insert($insertData);
+                if ($insertResult) {
+                    Session::set('form_info', '');
+                    $this->success("添加成功！", "articlelist");
+                } else {
+                    echo "ASdfasdfasdf";
+                    Session::set('form_info', $params);
+                    $this->error("添加失败！", "add");
+                }
+
             }
+
+        } else {
+            $data = Db::table("think_admin_menus")->select();
+            $tree2 = new Tree2();
+            $realData = array();
+            $realData = $tree2::hTree($data, $this->webData["parent_id"]);
+            $needData = array();
+            foreach ($realData as $key => $value) {
+                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist")) {
+                    $needData[] = $value;
+                }
+            }
+            $needData = $tree2::sort($needData, "sort_id");
+
+            $tplFenLei = "<option  value='\$menu_id'>\$title</option>";
+
+            $tplStr = $tree2->getTree($needData, $tplFenLei);
+
+            $this->assign([
+                "selOption" => $tplStr,
+            ]);
+            return $this->fetch();
         }
 
-        
-
-        $realData=$tree2::sort($realData,"sort_id");
-
-       
-
-
-
-        $tplFenLei = '<option value="\menu_id">\title</option>';
-
-        
-        return $this->fetch();
-    }
-    public function addDo() {
-        return $this->fetch();
     }
 
     public function articlelist() {
-       echo $this->webData["parent_id"];
+        $list = Db::table('think_article')->paginate(10);
+        $page = $list->render();
+        $this->assign('list', $list);
+        $this->assign('page', $page);
         return $this->fetch();
     }
     public function tagList() {
         $resData = Db::table("think_tag")->field('id,name')->select();
         return $resData;
+    }
+
+    public function del() {
+        $params = $this->request->param();
+        if (!!$params["id"]) {
+            $res = Db::table("think_article")->delete($params["id"]);
+            if ($res) {
+                $this->success("删除成功！", "articlelist");
+            } else {
+                $this->error("删除失败！", "articlelist");
+            }
+        } else {
+            $this->error("删除失败！", "articlelist");
+        }
+
+    }
+    public function edit() {
+        $params = $this->request->param();
+        if ($this->request->isPost()) {
+
+        } else {
+            $data = Db::table("think_admin_menus")->column("*", "menu_id");
+
+            $tree2 = new Tree2();
+            $realData = array();
+
+            $realData = $tree2::hTree($data, $this->webData["parent_id"]);
+
+            $needData = array();
+            foreach ($realData as $key => $value) {
+
+                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist")) {
+                    $needData[$key] = $value;
+                }
+            }
+
+            $tplFenLei = "<option \$selected  value='\$menu_id'>\$title</option>";
+
+            $dataArticle = Db::table("think_article")->where("id", $params["id"])->find();
+
+            $tplStr = $tree2->getTree($needData, $tplFenLei, $dataArticle["classifyid"]);
+
+            $this->assign([
+                "selOption" => $tplStr,
+            ]);
+        }
+
+        return $this->fetch();
     }
 }
 ?>

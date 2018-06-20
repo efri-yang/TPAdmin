@@ -38,14 +38,13 @@ class Test extends Controller {
             "strSelect" => $strSelect,
         ]);
 
-
-
         return $this->fetch("index");
 
     }
 
-    PUBLIC function test(){
-        echo 
+    public function test() {
+        $date = time();
+        return $date;
     }
 }
 ?>

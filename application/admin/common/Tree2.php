@@ -52,6 +52,7 @@ class Tree2 {
         $total = count($data);
         $selected = "";
         $space = "";
+
         if ($level == 0) {
             $seat = "";
         } else {
@@ -68,7 +69,9 @@ class Tree2 {
             extract($v);
             eval("\$nstr = \"$tplStr\";");
             $resStr .= $nstr;
+            $selected = "";
             if (count($v["sub"])) {
+
                 $resStr = $this->getTree($v["sub"], $tplStr, $selectId, $resStr, $level);
             }
         }

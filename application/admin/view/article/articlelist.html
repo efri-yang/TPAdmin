@@ -42,7 +42,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+
+                        {volist name="list" id="vo"}
+                            <tr>
+                                <td>{$vo.id}</td>
+                                <td>{$vo.title}</td>
+                                <td>{$vo.author}</td>
+                                <td>{$vo.tags}</td>
+                                <td><a href="#">评论数</a></td>
+                                <td>{$vo.create_time|date="Y-m-d",###}</td>
+                                <td>
+                                    <a href="{:url('del',['id'=>$vo.id])}" class="am-btn am-btn-xs am-btn-danger">删除</a>
+                                    <a href="{:url('edit',['id'=>$vo.id])}" class="am-btn am-btn-xs am-btn-default">编辑</a>
+                                </td>
+                            </tr>
+                        {/volist}
+                        <!-- <tr>
                             <td>1</td>
                             <td>标题01010101010101</td>
                             <td>散崖</td>
@@ -77,9 +92,10 @@
                                 <a href="#" class="am-btn am-btn-xs am-btn-danger">删除</a>
                                 <a href="#" class="am-btn am-btn-xs am-btn-default">编辑</a>
                             </td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
+                {$list->render()}
             </div>
         </div>
     </div>

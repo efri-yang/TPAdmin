@@ -172,8 +172,21 @@
 $(function() {
     //添加标签
 
-    var tagData={$tags};
+    var tagData=JSON.stringify({$tags});
+
+    console.dir(tagData);
+    
+    for(var i=0;i<tagData.length;i++){
+        alert(jsonObj[i].name);
+    //取json中的值
+    }
+
+    console.dir(tagData);
+   
     var aid={$aid};
+
+
+    
 
 
 

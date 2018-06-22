@@ -205,16 +205,18 @@ class Article extends Base {
             $dataArticle['content'] = stripslashes($dataArticle['content']);
             $tplStr = $tree2->getTree($needData, $tplFenLei, $dataArticle["classifyid"]);
             Session::set('form_info', $dataArticle);
-            $tagId = explode(",", $dataArticle["tags"]);
+            $tagId = explode(",", $dataArticle["tagid"]);
             $tags = explode(",", $dataArticle["tags"]);
+
             foreach ($tagId as $key => $value) {
                 $tagArr[$value] = $tags[$key];
             }
+
             $this->assign([
                 "selOption" => $tplStr,
                 "aid" => $params["id"],
                 "article" => $dataArticle,
-                "tags" => $tagArr,
+                "tags" => json_encode($tagArr),
             ]);
 
         }

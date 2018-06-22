@@ -22,9 +22,13 @@ class Article extends Base {
 
     public function add() {
         //这个是有问题的，假设有子集的时候
+        //
+        //如果是提交表单的时候 这个时候要根据事务 把文章和标签对应放到tagmap
         if ($this->request->isPost()) {
+            //对于文章的标签，那么插入的时候就要
             $params = $this->request->param();
             $result = $this->validate($params, 'ArticleAdd');
+            $flag = true;
             date_default_timezone_set('PRC');
             if (true !== $result) {
                 Session::set('form_info', $params);
@@ -45,12 +49,31 @@ class Article extends Base {
                     'iscomment' => $params["iscomment"],
                     'create_time' => time(),
                 ];
-                $insertResult = Db::table('think_article')->insert($insertData);
+
+                $tagIdArray = explode(",", $params["tagid"]);
+
+                $insertResult = Db::table('think_article')->insertGetId($insertData);
+
                 if ($insertResult) {
+
+                    foreach ($tagIdArray as $key => $value) {
+                        $insertTagMap[$key]["tagid"] = $value;
+                        $insertTagMap[$key]["aid"] = $insertResult;
+                    }
+
+                    $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
+
+                    if (!$insertMapResult) {
+                        $flag = false;
+                    }
+                } else {
+                    $flag = false;
+                }
+
+                if ($flag) {
                     Session::set('form_info', '');
                     $this->success("添加成功！", "articlelist");
                 } else {
-                    echo "ASdfasdfasdf";
                     Session::set('form_info', $params);
                     $this->error("添加失败！", "add");
                 }
@@ -90,7 +113,20 @@ class Article extends Base {
         return $this->fetch();
     }
     public function tagList() {
+
         $resData = Db::table("think_tag")->field('id,name')->select();
+        if ($aid = @$_POST["aid"]) {
+            //取得当前文章对应的分类id
+            $atagId = Db::table("think_tagmap")->field('group_concat(tagid) as tagid')->where("aid", $aid)->group("aid")->select();
+
+            $tagIdArr = explode(",", $atagId[0]["tagid"]);
+            foreach ($resData as $key => $value) {
+                if (in_array($value["id"], $tagIdArr)) {
+                    $resData[$key]["selected"] = 1;
+                }
+            }
+        }
+
         return $resData;
     }
 
@@ -110,8 +146,42 @@ class Article extends Base {
     }
     public function edit() {
         $params = $this->request->param();
-        if ($this->request->isPost()) {
 
+        if ($this->request->isPost()) {
+            date_default_timezone_set('PRC');
+            $resCount = Db::table("think_article")->where('id', $params["id"])->update([
+                'classifyid' => $params["classifyid"],
+                'title' => $params["title"],
+                'keyword' => $params["keyword"],
+                'description' => $params["description"],
+                'coverimg' => $params['coverimg'],
+                'content' => addslashes($params['content']),
+                'author' => $params["author"],
+                'tags' => $params["tags"],
+                'tagid' => $params["tagid"],
+                'iscomment' => $params["iscomment"],
+                'update_time' => time(),
+            ]);
+            if ($resCount) {
+                //先删除 tapmap中对应aid 的值，然后重新插入
+                Db::table("think_tagmap")->where("aid", $params["id"])->delete();
+                $tagIdArray = explode(",", $params["tagid"]);
+                foreach ($tagIdArray as $key => $value) {
+                    $insertTagMap[$key]["tagid"] = $value;
+                    $insertTagMap[$key]["aid"] = $params["id"];
+                }
+
+                $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
+
+                if ($insertMapResult) {
+                    $this->success("更新成功！", "articlelist");
+                } else {
+                    $this->success("更新失败！", "articlelist");
+                }
+
+            } else {
+                $this->success("更新失败！", "articlelist");
+            }
         } else {
             $data = Db::table("think_admin_menus")->column("*", "menu_id");
 
@@ -123,7 +193,7 @@ class Article extends Base {
             $needData = array();
             foreach ($realData as $key => $value) {
 
-                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist")) {
+                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist") && !strrpos($value["url"], "edit") && !strrpos($value["url"], "del")) {
                     $needData[$key] = $value;
                 }
             }
@@ -132,11 +202,21 @@ class Article extends Base {
 
             $dataArticle = Db::table("think_article")->where("id", $params["id"])->find();
 
+            $dataArticle['content'] = stripslashes($dataArticle['content']);
             $tplStr = $tree2->getTree($needData, $tplFenLei, $dataArticle["classifyid"]);
-
+            Session::set('form_info', $dataArticle);
+            $tagId = explode(",", $dataArticle["tags"]);
+            $tags = explode(",", $dataArticle["tags"]);
+            foreach ($tagId as $key => $value) {
+                $tagArr[$value] = $tags[$key];
+            }
             $this->assign([
                 "selOption" => $tplStr,
+                "aid" => $params["id"],
+                "article" => $dataArticle,
+                "tags" => $tagArr,
             ]);
+
         }
 
         return $this->fetch();

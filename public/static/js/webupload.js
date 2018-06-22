@@ -238,6 +238,9 @@
      } else {
          uploader.fileCount++;
          uploader.fileSize += file.size;
+         if($(".uploading-img-list").children("li").length && uploader.options.fileNumLimit==1){
+            $(".uploading-img-list").html("");
+         }
          if (uploader.fileCount > 0) {
              uploader.refresh();
          }
@@ -251,7 +254,6 @@
          $defaultNoPic.hide();
          addFile(file);
          setState('ready');
-
      }
 
  });

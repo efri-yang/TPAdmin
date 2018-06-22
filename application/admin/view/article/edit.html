@@ -1,7 +1,7 @@
 <div class="p15">
     {include file="common/breadcrumb" /}
     <div class="pl30 pr30 mt20">
-        <form action="{:url('add')}" method="post" id="J_ue-form">
+        <form action="{:url('edit',['id'=>$aid])}" method="post" id="J_ue-form">
             <div class="am-form am-form-horizontal" data-am-validator>
                 <div class="am-form-group">
                     <label class="am-para-label">所属分类：</label>
@@ -14,7 +14,7 @@
                 <div class="am-form-group">
                     <label class="am-para-label">标题：</label>
                     <div class="am-para-input">
-                        <input type="text" minlength="3" placeholder="请输入标题" required name="title" value="{$Think.session.form_info.title|default=''}"  />
+                        <input type="text" minlength="3" placeholder="请输入标题" required name="title" value="{$Think.session.form_info.title|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
@@ -45,44 +45,58 @@
                         }
                         </style>
                         <ul class="tag-list fl" id="J_tag-list-choice">
+                            {volist name="tags" id="vo" key='k'}
+                                <li class="am-btn am-btn-primary" data-index="{$k-1}">{$vo}<span><i class="iconfont icon-shanchu"></i></span></li>
+                            {/volist}
                         </ul>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_choice-tag-btn">选择标签</a>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_add-tag-btn">添加标签</a>
-                        <input type="hidden" name="tags" id="J_ipt-tags">
-                        <input type="hidden" name="tagid" id="J_ipt-tagid">
+                        <input type="hidden" name="tags" id="J_ipt-tags" value="{$article.tags}">
+                        <input type="hidden" name="tagid" id="J_ipt-tagid"  value="{$article.tagid}">
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">文章缩略图:</label>
                     <div class="am-para-input">
                         <div class="coms-upload-single-box">
+                            {eq name="$Think.session.form_info.coverimg" value=""}
                             <div class="no-pic" id="J_no-pic"></div>
+                            {else/}
                             <ul class="uploading-img-list clearfix" id="J_uploader-list">
+                                <li data-src="">
+                                    <div class="img-wrap">
+                                        
+                                        <img src="{$Think.session.form_info.coverimg}" class="img-upload" style="display:inline-block;vertical-align: middle;">
+                                    </div>
+                                    
+                                  
+                            </li>
                             </ul>
+                            {/eq}
                             <div class="upload-btn-group clearfix">
                                 <span class="mask"></span>
                                 <div id="filePicker" class="filepicker-container"></div>
                             </div>
                         </div>
-                        <input type="hidden" name="coverimg" id="J_covering"/>
+                        <input type="hidden" value="{$Think.session.form_info.coverimg}" name="coverimg" id="J_covering" />
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">关键词：</label>
                     <div class="am-para-input">
-                        <input type="text" placeholder="请输入关键词" name="keyword" />
+                        <input type="text" placeholder="请输入关键词" name="keyword" value="{$Think.session.form_info.keyword|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">描述：</label>
                     <div class="am-para-input">
-                        <textarea class="" rows="3" id="doc-ta-1" name="description"></textarea>
+                        <textarea class="" rows="3" id="doc-ta-1" name="description">{$Think.session.form_info.description|default=''}</textarea>
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">作者：</label>
                     <div class="am-para-input">
-                        <input type="text" placeholder="请输入作者" name="author" />
+                        <input type="text" placeholder="请输入作者" name="author" value="{$Think.session.form_info.author|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
@@ -95,10 +109,10 @@
                     <label class="am-para-label">是否评论：</label>
                     <div class="am-para-input">
                         <label class="am-radio-inline">
-                            <input type="radio" checked value="0" name="iscomment">是
+                            <input type="radio" value="1" {$Think.session.form_info.iscomment ? 'checked' :''} name="iscomment">是
                         </label>
                         <label class="am-radio-inline">
-                            <input type="radio" value="0" name="iscomment">否
+                            <input type="radio" value="0" {$Think.session.form_info.iscomment ? '' :'checked'}  name="iscomment">否
                         </label>
                     </div>
                 </div>
@@ -158,7 +172,9 @@
 $(function() {
     //添加标签
 
-    var tagData;
+    var tagData={$tags};
+    var aid={$aid};
+
 
 
     function renderAppend(data) {
@@ -191,18 +207,18 @@ $(function() {
             $.ajax({
                 url: "{:url('tagList')}",
                 type: "post",
-                data: {},
+                data: {"aid":aid},
                 dataType: "json",
                 success: function(data) {
                     if (!!data.length) {
                         tagData = data;
+                        console.dir(tagData)
                         renderAppend(tagData);
                         openChoiceDialg();
                     }
                 }
             })
         }
-
     })
     $("#J_taglist").on("click", "li", function() {
         var $this = $(this);
@@ -220,6 +236,7 @@ $(function() {
     $("#J_tag-list-choice").on("click", "span", function() {
         var $li = $(this).parent();
         var index = $li.data("index");
+        console.dir(tagData);
         tagData[index].selected = false;
         addTag(tagData);
     })
@@ -260,11 +277,11 @@ $(function() {
                 return false;
             }
 
-            
 
-             
-            
-            
+
+
+
+
         }
     })
 

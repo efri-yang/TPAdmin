@@ -120,8 +120,10 @@ class Article extends Base {
             $atagId = Db::table("think_tagmap")->field('group_concat(tagid) as tagid')->where("aid", $aid)->group("aid")->select();
 
             $tagIdArr = explode(",", $atagId[0]["tagid"]);
+
             foreach ($resData as $key => $value) {
                 if (in_array($value["id"], $tagIdArr)) {
+                    
                     $resData[$key]["selected"] = 1;
                 }
             }

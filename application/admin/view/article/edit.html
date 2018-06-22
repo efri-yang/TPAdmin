@@ -46,13 +46,13 @@
                         </style>
                         <ul class="tag-list fl" id="J_tag-list-choice">
                             {volist name="tags" id="vo" key='k'}
-                                <li class="am-btn am-btn-primary" data-index="{$k-1}">{$vo}<span><i class="iconfont icon-shanchu"></i></span></li>
+                            <li class="am-btn am-btn-primary" data-index="{$k-1}">{$vo}<span><i class="iconfont icon-shanchu"></i></span></li>
                             {/volist}
                         </ul>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_choice-tag-btn">选择标签</a>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_add-tag-btn">添加标签</a>
                         <input type="hidden" name="tags" id="J_ipt-tags" value="{$article.tags}">
-                        <input type="hidden" name="tagid" id="J_ipt-tagid"  value="{$article.tagid}">
+                        <input type="hidden" name="tagid" id="J_ipt-tagid" value="{$article.tagid}">
                     </div>
                 </div>
                 <div class="am-form-group">
@@ -65,12 +65,9 @@
                             <ul class="uploading-img-list clearfix" id="J_uploader-list">
                                 <li data-src="">
                                     <div class="img-wrap">
-                                        
                                         <img src="{$Think.session.form_info.coverimg}" class="img-upload" style="display:inline-block;vertical-align: middle;">
                                     </div>
-                                    
-                                  
-                            </li>
+                                </li>
                             </ul>
                             {/eq}
                             <div class="upload-btn-group clearfix">
@@ -109,10 +106,10 @@
                     <label class="am-para-label">是否评论：</label>
                     <div class="am-para-input">
                         <label class="am-radio-inline">
-                            <input type="radio" value="1" {$Think.session.form_info.iscomment ? 'checked' :''} name="iscomment">是
+                            <input type="radio" value="1" {$Think.session.form_info.iscomment ? 'checked' : ''} name="iscomment">是
                         </label>
                         <label class="am-radio-inline">
-                            <input type="radio" value="0" {$Think.session.form_info.iscomment ? '' :'checked'}  name="iscomment">否
+                            <input type="radio" value="0" {$Think.session.form_info.iscomment ? '' : 'checked'} name="iscomment">否
                         </label>
                     </div>
                 </div>
@@ -172,30 +169,46 @@
 $(function() {
     //添加标签
 
-    var tagData=JSON.stringify({$tags});
+    var tagData = [];
+    var aid = {$aid};
 
-    console.dir(tagData);
-    
-    for(var i=0;i<tagData.length;i++){
-        alert(jsonObj[i].name);
-    //取json中的值
-    }
+    $.ajax({
+        url: "{:url('tagList')}",
+        type: "post",
+        data: { "aid": aid },
+        dataType: "json",
+        success: function(data) {
+            if (!!data.length) {
+                tagData = data;
 
-    console.dir(tagData);
-   
-    var aid={$aid};
+                var str = "";
+                $.each(data, function(index, obj) {
+                    if(obj.selected){
+                        str += '<li class="am-btn am-btn-primary" data-index="'+index+'">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
+                    }
+                });
+                $("#J_tag-list-choice").html(str);
+            }
+        }
+    })
 
 
-    
 
 
 
-    function renderAppend(data) {
+
+
+
+
+
+
+
+    function renderAppend(data, elemId) {
         var str = "";
         $.each(data, function(index, obj) {
-            str += '<li class="am-btn am-btn-default ' + (obj.selected ? "selected" : "") + '">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
+            str += '<li class="am-btn am-btn-default ' + (!!obj.selected ? "selected" : "") + '">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
         });
-        $("#J_taglist").html(str);
+        $("#" + elemId).html(str);
     }
 
     function openChoiceDialg() {
@@ -214,19 +227,19 @@ $(function() {
     $("#J_choice-tag-btn").on("click", function(event) {
         event.preventDefault();
         if (!!tagData && tagData.length) {
-            renderAppend(tagData);
+            renderAppend(tagData, "J_taglist");
             openChoiceDialg();
         } else {
             $.ajax({
                 url: "{:url('tagList')}",
                 type: "post",
-                data: {"aid":aid},
+                data: { "aid": aid },
                 dataType: "json",
                 success: function(data) {
                     if (!!data.length) {
                         tagData = data;
                         console.dir(tagData)
-                        renderAppend(tagData);
+                        renderAppend(tagData, "J_taglist");
                         openChoiceDialg();
                     }
                 }

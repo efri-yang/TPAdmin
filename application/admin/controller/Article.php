@@ -123,7 +123,7 @@ class Article extends Base {
 
             foreach ($resData as $key => $value) {
                 if (in_array($value["id"], $tagIdArr)) {
-                    
+
                     $resData[$key]["selected"] = 1;
                 }
             }

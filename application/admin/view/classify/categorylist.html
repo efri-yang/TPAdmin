@@ -1,0 +1,28 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="pl30 pr30 mt20">
+        <div class="coms-table-wrap">
+            <div class="coms-table-bd">
+            	<style type="text/css">
+					.hander a{margin:0 5px;}
+            	</style>
+                <table class="am-table am-table-bordered">
+                    <thead>
+                        <tr>
+                            <!-- th 中 复选框的宽度 写死 固定50  然后其他的用百分比，但是必须有一个是不要设置值得(这样可以自适应省去计算麻烦) -->
+                            <th width="10%"><span>排序</span></th>
+                            <th width="10%"><span>ID</span></th>
+                            <th width="30%" class="align-l"><span>分类名称</span></th>
+                            <th width="20%"><span>描述</span></th>
+                            <th><span>操作</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	{$classifyStr}
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

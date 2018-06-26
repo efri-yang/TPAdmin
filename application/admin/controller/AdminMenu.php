@@ -16,15 +16,25 @@ class AdminMenu extends Base {
         //column( '字段列表', '数组键名'  )
         //理想的状态就是 当前控制器提供 template 和数据 然后通过方法返回
 
-
         $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'menu_id' => 'asc'])->column('*', 'menu_id');
 
         $tree = new Tree();
-       
 
+        $strTpl = '<tr>';
+        $strTpl .= '<td>\$id</td>';
+        $strTpl .= '<td class="align-l">\$title</td>';
+        $strTpl .= '<td class="align-l">\$url</td>';
+        $strTpl .= '<td>\<0parent_id></0parent_id></td>';
+        $strTpl .= '<td><i class="iconfont \$icon"></i>\$icon</td>';
+        $strTpl .= '<td>\$status</td>';
+        $strTpl .= '<td>\$log_type</td>';
+        $strTpl .= '<td><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">删除</a><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">修改</a></td>';
+        $strTpl .= '</tr>';
 
+        $tree->getTree($result, 0, $strTpl);
 
         $menuList = $tree->getMenu(0, $result);
+
         $this->assign('menuadmin', $menuList);
 
         return $this->fetch();
@@ -71,7 +81,7 @@ class AdminMenu extends Base {
                 $adminMenus->save();
                 $rule_data = [
                     'title' => $this->post['title'],
-                    'name' => $this->post['url']
+                    'name' => $this->post['url'],
                 ];
                 if ($adminMenus->menu_id) {
 
@@ -99,27 +109,34 @@ class AdminMenu extends Base {
 
     }
 
-    public function del($id) {
+    public function del() {
         //考虑删除父元素怎么办，所以del按钮 需要提示删除所有子元素
         //删除了 要删除 menu 和rule中的对应的菜单
         //同时要考虑到 auth_group中的
-
+        $params = $this->request->param();
+        $id = $params["id"];
         $arr = array($id);
+        //获取该菜单下的所有子菜单，因为删除了父菜单 那么子菜单也要跟着删除
         foreach ($this->menuList as $k => $v) {
             if ($v["parent_id"] == $id) {
                 $arr[] = $v["menu_id"];
             }
         }
+
         $trans_result = true;
 
         $adminMenus = new AdminMenus();
         $adminMenus->startTrans();
+
         $res = AdminMenus::destroy($arr);
+
         if (!$res) {
             $trans_result = false;
         }
+
         $authRules = new AuthRules();
         $authRules->startTrans();
+
         $res = AuthRules::where('menu_id', 'IN', $arr)->delete();
         if (!$res) {
             $trans_result = false;
@@ -128,11 +145,14 @@ class AdminMenu extends Base {
         $authGroup = new AuthGroup();
         $authGroupList = AuthGroup::all()->toArray();
         $authGroup->startTrans();
+
         foreach ($authGroupList as $key => $value) {
+
             $rule = explode(",", $value["rules"]);
             if (($offfset = array_search($id, $rule)) !== false) {
                 array_splice($rule, $offfset, 1);
                 if ($authGroup->save(['rules' => implode(",", $rule)], ['id' => $value['id']]) === false) {
+
                     $trans_result = false;
                     break;
                 }
@@ -155,7 +175,7 @@ class AdminMenu extends Base {
 
     }
 
-    public function  edit($id){
+    public function edit($id) {
 
         if ($this->request->isPost()) {
             $rule = [
@@ -163,7 +183,7 @@ class AdminMenu extends Base {
                 'title' => 'require',
                 'url' => 'require',
                 'sort_id' => 'require|number',
-                'log_type', 'require'
+                'log_type', 'require',
             ];
             $message = [
                 'parent_id' => '上级菜单不能为空',
@@ -176,85 +196,72 @@ class AdminMenu extends Base {
             $params = $this->request->param();
             $rule_data = [
                 'title' => $this->post['title'],
-                'name' => $this->post['url']
+                'name' => $this->post['url'],
             ];
             $validate = new Validate($rule, $message);
-            $flag=true;
+            $flag = true;
             if (!$validate->check($params)) {
                 Session::set('form_info', $params);
                 $this->error($validate->getError(), "edit");
-            }else{
+            } else {
 
-                $data["parent_id"]=$params["parent_id"];
-                $data["title"]=$params["title"];
-                $data["url"]=$params["url"];
-                $data["icon"]=$params["icon"];
-                $data["sort_id"]=$params["sort_id"];
-                $data["is_show"]=$params["is_show"];
-                $data["log_type"]=$params["log_type"];
+                $data["parent_id"] = $params["parent_id"];
+                $data["title"] = $params["title"];
+                $data["url"] = $params["url"];
+                $data["icon"] = $params["icon"];
+                $data["sort_id"] = $params["sort_id"];
+                $data["is_show"] = $params["is_show"];
+                $data["log_type"] = $params["log_type"];
                 //更新数据库
-                $adminM=new AdminMenus();
-                $adminR=new AuthRules();
+                $adminM = new AdminMenus();
+                $adminR = new AuthRules();
 
                 $adminM->startTrans();
                 $adminR->startTrans();
 
+                if ($adminM->save($data, ['menu_id' => $id]) !== false) {
 
-
-
-                if($adminM->save($data,['menu_id'=>$id]) !==false){
-
-                    if($adminR->save($rule_data,['id'=>$id]) ===false){
-                        $flag=false;
+                    if ($adminR->save($rule_data, ['id' => $id]) === false) {
+                        $flag = false;
                     }
-                }else{
+                } else {
 
-
-                    $flag=false;
+                    $flag = false;
                 }
 
-                if($flag){
+                if ($flag) {
                     $adminM->commit();
                     $adminR->commit();
                     return $this->success("修改成功！", "index");
-                }else{
+                } else {
                     $adminM->rollback();
                     $adminR->rollback();
                     return $this->error("修改失败", "index");
                 }
 
-
-
-
-
             }
 
-
-
-        }else{
-            function getParentId($pid,$data){
-                if($pid==0){
+        } else {
+            function getParentId($pid, $data) {
+                if ($pid == 0) {
                     return 0;
                 }
-                foreach($data as $key =>$value){
-                    if($value['menu_id']==$pid){
+                foreach ($data as $key => $value) {
+                    if ($value['menu_id'] == $pid) {
                         return $value["menu_id"];
                     }
                 }
             }
 
+            $currMenuInfo = Db::table("think_admin_menus")->where('menu_id', $id)->find();
 
-            $currMenuInfo=Db::table("think_admin_menus")->where('menu_id',$id)->find();
-
-            Session::set('form_info',$currMenuInfo);
+            Session::set('form_info', $currMenuInfo);
             $tree = new Tree();
             $result = Db::table("think_admin_menus")->order(["sort_id" => "asc", 'menu_id' => 'asc'])->column('*', 'menu_id');
-            $parentId=getParentId($currMenuInfo["parent_id"],$result);
-            $optionList = $tree->getOptions(0, $result,$parentId);
+            $parentId = getParentId($currMenuInfo["parent_id"], $result);
+            $optionList = $tree->getOptions(0, $result, $parentId);
             $this->assign('optionList', $optionList);
         }
-
-
 
         return $this->fetch();
     }

@@ -81,21 +81,14 @@ class Article extends Base {
             }
 
         } else {
-            $data = Db::table("think_admin_menus")->select();
+            $data = Db::table("think_category")->column("*", "id");
             $tree2 = new Tree2();
-            $realData = array();
-            $realData = $tree2::hTree($data, $this->webData["parent_id"]);
-            $needData = array();
-            foreach ($realData as $key => $value) {
-                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist")) {
-                    $needData[] = $value;
-                }
-            }
-            $needData = $tree2::sort($needData, "sort_id");
 
-            $tplFenLei = "<option  value='\$menu_id'>\$title</option>";
+            $realData = $tree2::hTree2($data, 0);
 
-            $tplStr = $tree2->getTree($needData, $tplFenLei);
+            $tplFenLei = "<option  value='\$id'>\$space \$name</option>";
+
+            $tplStr = $tree2->getTree($realData, $tplFenLei);
 
             $this->assign([
                 "selOption" => $tplStr,
@@ -185,27 +178,19 @@ class Article extends Base {
                 $this->success("更新失败！", "articlelist");
             }
         } else {
-            $data = Db::table("think_admin_menus")->column("*", "menu_id");
+            $data = Db::table("think_category")->column("*", "id");
 
             $tree2 = new Tree2();
             $realData = array();
 
-            $realData = $tree2::hTree($data, $this->webData["parent_id"]);
+            $realData = $tree2::hTree2($data, 0);
 
-            $needData = array();
-            foreach ($realData as $key => $value) {
-
-                if (!strrpos($value["url"], "add") && !strrpos($value["url"], "articlelist") && !strrpos($value["url"], "edit") && !strrpos($value["url"], "del")) {
-                    $needData[$key] = $value;
-                }
-            }
-
-            $tplFenLei = "<option \$selected  value='\$menu_id'>\$title</option>";
+            $tplFenLei = "<option \$selected  value='\$id'>\$space \$name</option>";
 
             $dataArticle = Db::table("think_article")->where("id", $params["id"])->find();
 
             $dataArticle['content'] = stripslashes($dataArticle['content']);
-            $tplStr = $tree2->getTree($needData, $tplFenLei, $dataArticle["classifyid"]);
+            $tplStr = $tree2->getTree($realData, $tplFenLei, $dataArticle["classifyid"]);
             Session::set('form_info', $dataArticle);
             $tagId = explode(",", $dataArticle["tagid"]);
             $tags = explode(",", $dataArticle["tags"]);

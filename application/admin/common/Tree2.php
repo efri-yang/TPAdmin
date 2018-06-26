@@ -69,7 +69,7 @@ class Tree2 {
             $seat = "|—";
         }
         $level++;
-        $space = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $level - 1) . $seat;
+        $space = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", $level - 1) . $seat;
         foreach ($data as $k => $v) {
             //证明了第一层级
             if ($k == $selectId) {

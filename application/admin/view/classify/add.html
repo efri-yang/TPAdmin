@@ -1,11 +1,11 @@
 <div class="p15">
     {include file="common/breadcrumb" /}
     <div class="am-form am-form-horizontal">
-        <form data-am-validator method="post" action="{:url('add')}">
+        <form data-am-validator method="post" action="{:url('addpost')}">
             <div class="am-form-group">
                 <label class="am-para-label">上级：</label>
                 <div class="am-para-input">
-                    <select name="parent_id">
+                    <select name="pid">
                     	<option selected value="0">一级分类</option>
                     	{$classifyStr}
                     </select>
@@ -14,13 +14,13 @@
             <div class="am-form-group">
                 <label class="am-para-label">分类名称：</label>
                 <div class="am-para-input">
-                    <input type="text" required name="title" value="" />
+                    <input type="text" required name="cname" value="" />
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label">描述：</label>
                 <div class="am-para-input">
-                    <textarea></textarea>
+                    <textarea name="description"></textarea>
                 </div>
             </div>
             <div class="am-form-group">
@@ -47,19 +47,19 @@
             <div class="am-form-group">
                 <label class="am-para-label">SEO标题：</label>
                 <div class="am-para-input">
-                    <input type="text" required name="sort_id" value="" />
+                    <input type="text"  name="seotitle" value="" />
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label">SEO关键字：</label>
                 <div class="am-para-input">
-                    <input type="text" required name="sort_id" value="" />
+                    <input type="text"  name="seokeyword" value="" />
                 </div>
             </div>
             <div class="am-form-group">
                 <label class="am-para-label">SEO描述：</label>
                 <div class="am-para-input">
-                    <textarea></textarea>
+                    <textarea name="seodescription"></textarea>
                 </div>
             </div>
             <div class="am-form-group">

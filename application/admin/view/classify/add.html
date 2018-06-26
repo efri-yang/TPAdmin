@@ -1,0 +1,79 @@
+<div class="p15">
+    {include file="common/breadcrumb" /}
+    <div class="am-form am-form-horizontal">
+        <form data-am-validator method="post" action="{:url('add')}">
+            <div class="am-form-group">
+                <label class="am-para-label">上级：</label>
+                <div class="am-para-input">
+                    <select name="parent_id">
+                    	<option selected value="0">一级分类</option>
+                    	{$classifyStr}
+                    </select>
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">分类名称：</label>
+                <div class="am-para-input">
+                    <input type="text" required name="title" value="" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">描述：</label>
+                <div class="am-para-input">
+                    <textarea></textarea>
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">封面图：</label>
+                <div class="am-para-input">
+                    <div class="coms-upload-single-box">
+                        <div class="no-pic" id="J_no-pic"></div>
+                        <ul class="uploading-img-list clearfix" id="J_uploader-list">
+                        </ul>
+                        <div class="upload-btn-group clearfix">
+                            <span class="mask"></span>
+                            <div id="filePicker" class="filepicker-container"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="coverimg" id="J_covering" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">排序：</label>
+                <div class="am-para-input">
+                    <input type="text" required name="sort_id" value="100" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">SEO标题：</label>
+                <div class="am-para-input">
+                    <input type="text" required name="sort_id" value="" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">SEO关键字：</label>
+                <div class="am-para-input">
+                    <input type="text" required name="sort_id" value="" />
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label">SEO描述：</label>
+                <div class="am-para-input">
+                    <textarea></textarea>
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-para-label"></label>
+                <div class="am-para-input">
+                    <input type="submit" class="am-btn am-btn-primary">
+                    <input type="reset" class="am-btn am-btn-default">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/plugin/ueditor1_4_3/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/plugin/ueditor1_4_3/ueditor.all.js"></script>
+<script type="text/javascript" src="__STATIC__/js/plugin/webuploader-0.1.5/webuploader.min.js"></script>
+<link rel="stylesheet" type="text/css" href="__STATIC__/js/plugin/webuploader-0.1.5/webuploader.css" />
+<script type="text/javascript" src="__STATIC__/js/webupload.js"></script>

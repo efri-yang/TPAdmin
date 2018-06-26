@@ -27,6 +27,16 @@ class Tree2 {
         }
         return isset($data) ? $data : array();
     }
+
+    static public function hTree2($arr, $pid = 0) {
+        foreach ($arr as $k => $v) {
+            if ($v['pid'] == $pid) {
+                $data[$v['id']] = $v;
+                $data[$v['id']]['sub'] = self::hTree2($arr, $v['id']);
+            }
+        }
+        return isset($data) ? $data : array();
+    }
     /**
      * 纵向分类树
      */

@@ -17,19 +17,34 @@ class AdminMenu extends Base {
         //理想的状态就是 当前控制器提供 template 和数据 然后通过方法返回
 
         $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'id' => 'asc'])->column('*', 'id');
-
+        foreach ($result as $k => $v) {
+            $v["status"]==1 ? $result[$k]["status"]="正常" : $result[$k]["status"]="禁用";
+            
+           
+        }
         $tree = new Tree();
+        $needData=$tree::hTree($result);
 
-        $strTpl = '<tr>';
-        $strTpl .= '<td>\$id</td>';
-        $strTpl .= '<td class="align-l">\$title</td>';
-        $strTpl .= '<td class="align-l">\$url</td>';
-        $strTpl .= '<td>\$pid</td>';
-        $strTpl .= '<td><i class="iconfont \$icon"></i>\$icon</td>';
-        $strTpl .= '<td>\$status</td>';
-        $strTpl .= '<td>\$log_type</td>';
-        $strTpl .= '<td><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">删除</a><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">修改</a></td>';
-        $strTpl .= '</tr>';
+
+        
+
+        $strTpl = "<tr>";
+        $strTpl .= "<td>\$id</td>";
+        $strTpl .= "<td class='align-l'>\$space \$title</td>";
+        $strTpl .= "<td class='align-l'>\$url</td>";
+        $strTpl .= "<td>\$pid</td>";
+        $strTpl .= "<td><i class='iconfont \$icon'></i>\$icon</td>";
+        $strTpl .= "<td>\$sort_id</td>";
+        $strTpl .= "<td>\$status</td>";
+        $strTpl .= "<td>\$log_type</td>";
+        $strTpl .= "<td><a href='#' class='am-btn am-btn-danger am-btn-xs mr5'>删除</a><a href='' class='am-btn am-btn-default am-btn-xs mr5'>修改</a></td>";
+        $strTpl .= "</tr>";
+        
+        $str=$tree->getTree($needData,$strTpl);
+
+        $this->assign([
+            "menustr"=>$str
+        ]);
 
         return $this->fetch();
     }

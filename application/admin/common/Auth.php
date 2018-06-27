@@ -302,10 +302,10 @@ class Auth {
                 $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
                 @(eval('$condition=(' . $command . ');'));
                 if ($condition) {
-                    $authList[] = strtolower($rule['menu_id']);
+                    $authList[] = strtolower($rule['id']);
                 }
             } else {
-                $authList[] = strtolower($rule["menu_id"]);
+                $authList[] = strtolower($rule["id"]);
             }
         }
 
@@ -313,14 +313,14 @@ class Auth {
         //通过menus表的关联筛选出符合的菜单
 
         $map_menu = array(
-            'menu_id' => ['in', $authList],
+            'id' => ['in', $authList],
             'is_show' => 1,
         );
 
         if ($uid == 1) {
-            $menus = Db::name('admin_menus')->where('is_show=1')->order(["sort_id" => "asc", 'menu_id' => 'asc'])->field('menu_id,title,url,icon,is_show,parent_id')->column('*', 'menu_id');
+            $menus = Db::name('admin_menus')->where('is_show=1')->order(["sort_id" => "asc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
         } else {
-            $menus = Db::name('admin_menus')->where($map_menu)->order(["sort_id" => "asc", 'menu_id' => 'asc'])->field('menu_id,title,url,icon,is_show,parent_id')->column('*', 'menu_id');
+            $menus = Db::name('admin_menus')->where($map_menu)->order(["sort_id" => "asc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
         }
 
         return $menus;

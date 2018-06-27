@@ -16,7 +16,6 @@ use think\Session;
 class Base extends Controller {
     protected $request, $param, $post, $get, $module, $controller, $action, $urlMCA, $urlMC, $webData, $sideMenuList, $menuList, $parentIds, $auth;
     public function __construct() {
-
         $this->request = Request::instance();
         //请求参数
         $this->param = $this->request->param();
@@ -25,18 +24,19 @@ class Base extends Controller {
         $this->module = $this->request->module();
         $this->controller = $this->request->controller();
         $this->action = $this->request->action();
-
+        //后去模型/控制器/方法
         $this->urlMCA = $this->module . "/" . Loader::parseName($this->controller) . "/" . $this->action;
-
+        //后去模型/控制器
         $this->urlMC = $this->module . "/" . Loader::parseName($this->controller) . "/";
 
         parent::__construct();
 
     }
     public function _initialize() {
-
         $auth = new Auth();
+
         $this->auth = $auth;
+
         $tree = new Tree();
         if ($auth->isLogin()) {
             $uid = Session::get('user.user_id');
@@ -53,9 +53,8 @@ class Base extends Controller {
             //获取当前url对应的menu的信息数组
             $currentMenuInfo = $this->getCurrentMenuInfo();
 
-
             //当前url的menu_id(来判断左侧菜单栏显示哪个项)
-            $currentMenuId = $currentMenuInfo['menu_id'];
+            $currentMenuId = $currentMenuInfo['id'];
 
             $this->menuList = Db::table("think_admin_menus")->where('status', 1)->select();
 
@@ -69,8 +68,8 @@ class Base extends Controller {
             //获取当前的title
             $this->webData["webtitle"] = $currentMenuInfo["title"];
 
-            $this->webData["menu_id"]= $currentMenuId;
-            $this->webData["parent_id"]=$currentMenuInfo["parent_id"];
+            $this->webData["menu_id"] = $currentMenuId;
+            $this->webData["parent_id"] = $currentMenuInfo["pid"];
 
             //获取左侧菜单的信息
             $this->webData["sidemenu"] = $tree->getSideMenu(0, $currentMenuId, $this->parentIds, $this->sideMenuList);
@@ -93,8 +92,8 @@ class Base extends Controller {
     public function getBreadcrumb($currentNavId, $menuList, $navStr = "") {
         if (is_array($menuList)) {
             foreach ($menuList as $key => $value) {
-                if ($value['menu_id'] == $currentNavId) {
-                    
+                if ($value['id'] == $currentNavId) {
+
                     if (!$navStr) {
                         $bread = '<li class="am-active">' . $value["title"] . '</li>';
                     } else {
@@ -106,7 +105,7 @@ class Base extends Controller {
 
                     }
                     $navStr = $bread . $navStr;
-                    $navStr = $this->getBreadcrumb($value["parent_id"], $menuList, $navStr);
+                    $navStr = $this->getBreadcrumb($value["pid"], $menuList, $navStr);
 
                 }
 
@@ -117,9 +116,9 @@ class Base extends Controller {
 
     public function getParentId($id, $data, $parentIds = array()) {
         foreach ($data as $key => $value) {
-            if ($value["menu_id"] == $id) {
-                $parentIds[] = $value["parent_id"];
-                $parentIds = $this->getParentId($value["parent_id"], $data, $parentIds);
+            if ($value["id"] == $id) {
+                $parentIds[] = $value["pid"];
+                $parentIds = $this->getParentId($value["pid"], $data, $parentIds);
             }
         }
         return $parentIds;
@@ -132,7 +131,7 @@ class Base extends Controller {
 
     protected function getCurrentMenuInfo() {
 
-        return Db::name('admin_menus')->where(['url' => $this->urlMCA])->find();
+        return Db::table('think_admin_menus')->where(['url' => $this->urlMCA])->find();
     }
 }
 

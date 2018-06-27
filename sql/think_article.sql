@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-06-19 03:17:22
+-- Generation Time: 2018-06-27 02:37:35
 -- 服务器版本： 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -46,6 +46,15 @@ CREATE TABLE `think_article` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+-- 转存表中的数据 `think_article`
+--
+
+INSERT INTO `think_article` (`id`, `classifyid`, `title`, `keyword`, `description`, `coverimg`, `content`, `author`, `tags`, `tagid`, `iscomment`, `create_time`, `update_time`, `clicks`) VALUES
+(1, 2, '国内文章01', '关键字', '描述', '/Upload/image/ueditor/20180626/e3d8501e0b5180fcc6566e7eface94e3.jpg', '<p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p>国内文章01</p><p><img src=\\\"/Upload/image/ueditor/20180626/1530002888.jpg\\\" title=\\\"1530002888.jpg\\\" alt=\\\"750x300banner.jpg\\\"/></p>', '作者', '娱乐', '1', 1, 1530002891, 0, 0),
+(2, 3, '福建新闻01', '', '', '/Upload/image/ueditor/20180626/2a85a12be10870b869f58b63f604d27c.jpg', '<p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p>福建新闻01</p><p><img src=\\\"/Upload/image/ueditor/20180626/1530002888.jpg\\\" title=\\\"1530002888.jpg\\\" alt=\\\"750x300banner.jpg\\\"/></p>', '', '娱乐,体育', '1,2', 1, 1530003350, 0, 0),
+(3, 5, '福州新闻01', '', '', '/Upload/image/ueditor/20180626/be15ba840abe0ca4219c368176d41b06.jpg', '<p>福州新闻01</p><p>福州新闻01</p><p>福州新闻01</p><p>福州新闻01</p><p>福州新闻01</p><p>福州新闻01</p><p><img src=\\\"/Upload/image/ueditor/20180626/1530002888.jpg\\\" title=\\\"1530002888.jpg\\\" alt=\\\"750x300banner.jpg\\\"/></p>', '', '娱乐,体育,网购,科技', '1,2,3,4', 1, 1530003436, 0, 0);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -64,7 +73,7 @@ ALTER TABLE `think_article`
 -- 使用表AUTO_INCREMENT `think_article`
 --
 ALTER TABLE `think_article`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 限制导出的表
@@ -74,7 +83,7 @@ ALTER TABLE `think_article`
 -- 限制表 `think_article`
 --
 ALTER TABLE `think_article`
-  ADD CONSTRAINT `think_article_ibfk_1` FOREIGN KEY (`classifyid`) REFERENCES `think_admin_menus` (`menu_id`);
+  ADD CONSTRAINT `think_article_ibfk_1` FOREIGN KEY (`classifyid`) REFERENCES `think_category` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

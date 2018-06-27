@@ -16,7 +16,7 @@ class AdminMenu extends Base {
         //column( '字段列表', '数组键名'  )
         //理想的状态就是 当前控制器提供 template 和数据 然后通过方法返回
 
-        $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'menu_id' => 'asc'])->column('*', 'menu_id');
+        $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'id' => 'asc'])->column('*', 'id');
 
         $tree = new Tree();
 
@@ -24,18 +24,12 @@ class AdminMenu extends Base {
         $strTpl .= '<td>\$id</td>';
         $strTpl .= '<td class="align-l">\$title</td>';
         $strTpl .= '<td class="align-l">\$url</td>';
-        $strTpl .= '<td>\<0parent_id></0parent_id></td>';
+        $strTpl .= '<td>\$pid</td>';
         $strTpl .= '<td><i class="iconfont \$icon"></i>\$icon</td>';
         $strTpl .= '<td>\$status</td>';
         $strTpl .= '<td>\$log_type</td>';
         $strTpl .= '<td><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">删除</a><a href="#" class="am-btn am-btn-danger am-btn-xs mr5">修改</a></td>';
         $strTpl .= '</tr>';
-
-        $tree->getTree($result, 0, $strTpl);
-
-        $menuList = $tree->getMenu(0, $result);
-
-        $this->assign('menuadmin', $menuList);
 
         return $this->fetch();
     }

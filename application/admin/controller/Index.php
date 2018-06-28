@@ -16,6 +16,7 @@ class Index extends Base {
     // }
 
     public function index() {
+
         $this->view->engine->layout(true);
         return $this->fetch();
     }

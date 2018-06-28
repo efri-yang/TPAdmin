@@ -38,12 +38,10 @@ CREATE TABLE `think_auth_group_access` (
 --
 
 INSERT INTO `think_auth_group_access` (`uid`, `group_id`) VALUES
+(1, 1),
 (2, 2),
 (3, 2),
-(48, 3),
-(49, 3),
-(54, 3),
-(57, 10);
+(48, 3);
 
 --
 -- Indexes for dumped tables

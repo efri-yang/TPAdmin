@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-06-27 02:38:35
+-- Generation Time: 2018-06-27 18:05:28
 -- 服务器版本： 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -75,7 +75,7 @@ INSERT INTO `think_auth_rules` (`id`, `name`, `title`, `type`, `status`, `condit
 (67, 'admin/classify/categorylist', '分类列表', 1, 1, '', 36),
 (68, 'admin/classify/add', '添加分类', 1, 1, '', 37),
 (69, 'admin/classify/del', '删除分类', 1, 1, '', 38),
-(70, '1', '编辑分类', 1, 1, '', 39);
+(70, 'admin/classify/edit', '编辑分类', 1, 1, '', 39);
 
 --
 -- Indexes for dumped tables
@@ -96,7 +96,7 @@ ALTER TABLE `think_auth_rules`
 -- 使用表AUTO_INCREMENT `think_auth_rules`
 --
 ALTER TABLE `think_auth_rules`
-  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

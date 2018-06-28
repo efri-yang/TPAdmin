@@ -47,6 +47,7 @@ class Base extends Controller {
                     $this->error("用户权限不存在！", "login/index");
                 }
             }
+
             //获取用户的信息
             $this->webData["userinfo"] = $this->getUserInfo($uid);
 
@@ -59,6 +60,7 @@ class Base extends Controller {
             $this->menuList = Db::table("think_admin_menus")->where('status', 1)->select();
 
             //获取侧边栏目录结构数据
+
             $this->sideMenuList = $auth->getMenuList($uid, 1);
 
             //获取当前url 的parent_id(这个parentid 的集合 是针对左侧栏)

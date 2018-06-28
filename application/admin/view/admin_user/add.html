@@ -1,11 +1,11 @@
 <div class="p15">
     {include file="common/breadcrumb" /}
     <div class="am-form am-form-horizontal mt20 pr30">
-        <form action="{:url('add')}" method="post" data-am-validator>
+        <form action="{:url('addPost')}" method="post" data-am-validator>
             <div class="am-form-group">
                 <label class="am-para-label">角色：</label>
                 <div class="am-para-input lh-default">
-                	{volist name="groupList" id="vo"}
+                	{volist name="data" id="vo"}
 	                	<label class="pr15"><input type="checkbox" name="group_id[]" value="{$vo.id}" required>{$vo.title}</label>
                 	{/volist}
                 </div>

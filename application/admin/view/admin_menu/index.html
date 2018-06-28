@@ -45,7 +45,7 @@ $(function() {
         var layerIndex;
         var href = $this.attr("href");
         var tipTxt;
-        if ($this.data("roler") == "single") {
+        if (!$this.data("parent")) {
             tipTxt = "您确定删除该菜单项？";
         } else {
             tipTxt = "删除该菜单项,其包含的子菜单也将被删除！"

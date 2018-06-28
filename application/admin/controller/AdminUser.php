@@ -15,65 +15,64 @@ class AdminUser extends Base {
         //分页的调用 无需要在使用select()
         $lists = $authUser->paginate();
         $page = $lists->render();
-//        $this->assign("list", $lists);
-//        $this->assign('page', $page);
         $this->assign([
-            "list"=>$lists,
-            'page'=>$page
+            "list" => $lists,
+            'page' => $page,
         ]);
         return $this->fetch();
     }
+
+    //修改个人资料
     public function profile() {
         return $this->fetch();
     }
 
     public function add() {
         //要去auth_group 查询所有的角色
-        $groupList = AuthGroup::all()->toArray();
-        if ($this->request->isPost()) {
-            $trans_result = true;
-            $param = $this->request->param();
-            $data = [];
-            $authUser = new AuthUser();
-            $authUser->startTrans();
-            $authUser->data([
-                'username' => $param["username"],
-                'password' => md5($param["password"]),
-                'email' => $param['email'],
-                'phone' => $param["phone"],
-            ]);
-            if ($authUser->save() === false) {
-                $trans_result = false;
-            }
-            $authGroupAccess = new AuthGroupAccess();
-            $authGroupAccess->startTrans();
-            //group_id 可能是一个数组(一个用户可能有多个角色)
-            foreach ($param["group_id"] as $key => $value) {
-                $data[$key]['uid'] = $authUser->id;
-                $data[$key]['group_id'] = $value;
-            }
+        $data = AuthGroup::all()->toArray();
 
-            if ($authGroupAccess->saveAll($data) === false) {
-                $trans_result = false;
-            }
-            if ($trans_result) {
-                $authUser->commit();
-                $authGroupAccess->commit();
-                $this->success("添加成功！", "index");
-            } else {
-                $authUser->rollBack();
-                $authGroupAccess->rollBack();
-                //因为失败的时候要记住用户输入的信息，避免重新填写
-                Session::set("form_info", $param);
-                $this->error("添加失败！", "index");
-            }
-        } else {
-            //添加的时候，不应该会有任何的form_info存在
-            Session::set("form_info", '');
-            $this->assign("groupList", $groupList);
-            return $this->fetch();
+        $this->assign("data", $data);
+        return $this->fetch();
+
+    }
+
+    public function addPost() {
+        $trans_result = true;
+        $param = $this->request->param();
+        $data = [];
+        $authUser = new AuthUser();
+        $authUser->startTrans();
+        $authUser->data([
+            'username' => $param["username"],
+            'password' => md5($param["password"]),
+            'email' => $param['email'],
+            'phone' => $param["phone"],
+        ]);
+        if ($authUser->save() === false) {
+            $trans_result = false;
+        }
+        $authGroupAccess = new AuthGroupAccess();
+        $authGroupAccess->startTrans();
+        //group_id 可能是一个数组(一个用户可能有多个角色)
+        foreach ($param["group_id"] as $key => $value) {
+            $data[$key]['uid'] = $authUser->id;
+            $data[$key]['group_id'] = $value;
         }
 
+        if ($authGroupAccess->saveAll($data) === false) {
+            $trans_result = false;
+        }
+        if ($trans_result) {
+            $authUser->commit();
+            $authGroupAccess->commit();
+            $this->success("添加成功！", "index");
+        } else {
+            $authUser->rollBack();
+            $authGroupAccess->rollBack();
+            //因为失败的时候要记住用户输入的信息，避免重新填写
+            Session::set("form_info", $param);
+            $this->error("添加失败！", "index");
+        }
     }
 
     public function edit($id) {
@@ -156,31 +155,29 @@ class AdminUser extends Base {
         return $this->fetch();
     }
 
-
-    public function del($id){
-        $trans_flag=true;
-        $authUser=new AuthUser();
+    public function del($id) {
+        $trans_flag = true;
+        $authUser = new AuthUser();
         $authUser->startTrans();
-        $authGroupAccess=new AuthGroupAccess();
+        $authGroupAccess = new AuthGroupAccess();
         $authGroupAccess->startTrans();
-        if($authUser->where('id',$id)->delete()){
-            if($authGroupAccess->where('uid',$id)->find() && !$authGroupAccess->where('uid',$id)->delete()){
-                $trans_flag=false;
+        if ($authUser->where('id', $id)->delete()) {
+            if ($authGroupAccess->where('uid', $id)->find() && !$authGroupAccess->where('uid', $id)->delete()) {
+                $trans_flag = false;
             }
-        }else{
-            $trans_flag=false;
+        } else {
+            $trans_flag = false;
         }
 
-        if($trans_flag){
+        if ($trans_flag) {
             $authUser->commit();
             $authGroupAccess->commit();
             $this->success("删除成功！", "index");
-        }else{
+        } else {
             $authUser->rollback();
             $authGroupAccess->rollback();
             $this->error("删除失败！", "index");
         }
-
 
     }
 

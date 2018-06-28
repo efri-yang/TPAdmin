@@ -175,7 +175,7 @@ class Auth {
             'type' => $type,
             'status' => 1,
         );
-        $rules = Db::name($this->config['auth_rule'])->where($map)->field('condition,name')->select();
+        $rules = Db::name($this->config['auth_rule'])->where($map)->field('condition,name,menu_id')->select();
         $authList = [];
         foreach ($rules as $rule) {
             if (!empty($rule['condition'])) {
@@ -185,10 +185,10 @@ class Auth {
                 //执行$command 条件并将结果返回给condition(0 或者 1)
                 @(eval('$condition=(' . $command . ');'));
                 if ($condition) {
-                    $authList[] = strtolower($rule['name']);
+                    $authList[] = strtolower($rule['menu_id']);
                 }
             } else {
-                $authList[] = strtolower($rule['name']);
+                $authList[] = strtolower($rule['menu_id']);
             }
         }
         $_authList[$uid . $t] = $authList;
@@ -265,16 +265,17 @@ class Auth {
         static $_authList = [];
 
         $t = implode(',', (array) $type);
-        //获取当前用户的权限列表
+
+        //获取当前用户的权限列表 $uid . $t=用户+type类型
         if (isset($_authList[$uid . $t])) {
             return $_authList[$uid . $t];
         }
-
+        //1为实时认证  2为登录验证，如果是登录验证，同时拥有session中拥有authlist,那么直接返回权限列表
         if (2 == $this->config['auth_type'] && Session::has('_auth_list_' . $uid . $t)) {
 
             return Session::get('_auth_list_' . $uid . $t);
         }
-
+        //读取用户所属用户组
         $groups = $this->getGroups($uid);
 
         //当前用户所有权限的id
@@ -286,36 +287,60 @@ class Auth {
         //ids 去重复
         $ids = array_unique($ids);
 
+        if (empty($ids)) {
+            $_authList[$uid . $t] = [];
+            return [];
+        }
+
         //获取所有的满足条件的rule
         $map = array(
             'id' => ['in', $ids],
             'type' => $type,
             'status' => 1,
         );
+
         $rules = Db::name($this->config["auth_rule"])->where($map)->field('condition,name,menu_id')->select();
 
         //保存通过筛选的menu_id
         $authList = [];
         foreach ($rules as $key => $rule) {
+
             if (!empty($rule["condition"])) {
                 $user = $this->getUserInfo($uid); //获取用户信息，为后面的$user["条件"] 做准备
+
                 $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
+
                 @(eval('$condition=(' . $command . ');'));
+
                 if ($condition) {
-                    $authList[] = strtolower($rule['id']);
+
+                    $authList[] = strtolower($rule['menu_id']);
                 }
             } else {
-                $authList[] = strtolower($rule["id"]);
+                $authList[] = strtolower($rule["menu_id"]);
             }
         }
 
+        $_authList[$uid . $t] = $authList;
+
+        if (2 == $this->config['auth_type']) {
+            //规则列表结果保存到session
+            Session::set('_auth_list_' . $uid . $t, $authList);
+        }
         $authList = array_unique($authList);
+
+        $idss = []; //保存用户所属用户组设置的所有权限规则id
+        foreach ($authList as $gg) {
+            $idss = array_merge($idss, explode(',', trim($gg, ',')));
+        }
         //通过menus表的关联筛选出符合的菜单
 
         $map_menu = array(
-            'id' => ['in', $authList],
+            'id' => ['in', $idss],
             'is_show' => 1,
         );
+
+        $uid = Session::get('user.user_id');
 
         if ($uid == 1) {
             $menus = Db::name('admin_menus')->where('is_show=1')->order(["sort_id" => "asc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');

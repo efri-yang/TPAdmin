@@ -1,11 +1,11 @@
 <div class="p15">
 	{include file="common/breadcrumb" /}
 	<div class="am-form am-form-horizontal">
-		<form data-am-validator  method="post" action="{:url('edit',['id'=>$Think.session.form_info.menu_id])}">
+		<form data-am-validator  method="post" action="{:url('editPost',['id'=>$data.id])}">
 			<div class="am-form-group">
 				<label class="am-para-label">上级菜单：</label>
 				<div class="am-para-input">
-					<select name="parent_id">
+					<select name="pid">
 						{$optionList}
 					</select>
 				</div>
@@ -14,38 +14,47 @@
 			<div class="am-form-group">
 				<label class="am-para-label">菜单名称：</label>
 				<div class="am-para-input">
-					<input type="text" required name="title" value="{$Think.session.form_info.title|default=''}" />
+					<input type="text" required name="title" value="{$data.title|default=''}" />
 				</div>
 			</div>
 
 			<div class="am-form-group">
 				<label class="am-para-label">URL：</label>
 				<div class="am-para-input">
-					<input type="text" required name="url"  pattern="^[0-9a-zA-Z//]+$" value="{$Think.session.form_info.url|default=''}"/>
+					<input type="text" required name="url"  pattern="^[0-9a-zA-Z//]+$" value="{$data.url|default=''}"/>
 				</div>
 			</div>
 
 			<div class="am-form-group">
 				<label class="am-para-label">菜单图标：</label>
 				<div class="am-para-input">
-					<input type="text" required name="icon" value="{$Think.session.form_info.icon|default=''}" />
+					<input type="text" required name="icon" value="{$data.icon|default=''}" />
 				</div>
 			</div>
 
 			<div class="am-form-group">
 				<label class="am-para-label">排序：</label>
 				<div class="am-para-input">
-					<input type="text"  value="{$Think.session.form_info.sort_id|default='1'}" name="sort_id" />
+					<input type="text"  value="{$data.sort_id|default='1'}" name="sort_id" />
 				</div>
 			</div>
 
 			<div class="am-form-group">
-				<label class="am-para-label">是否显示：</label>
+				<label class="am-para-label">显示在左侧栏：</label>
 				<div class="am-para-input">
 					<label class="am-radio-inline">
-						<input type="radio" name="is_show" value="1" {$Think.session.form_info.is_show==1 ? "checked" :""}>是</label>
+						<input type="radio" name="is_show" value="1" {$data.is_show==1 ? "checked" :""}>是</label>
 
-					<label class="am-radio-inline"><input {$Think.session.form_info.is_show==0 ? "checked" :""}  type="radio" name="is_show" value="0">否</label>
+					<label class="am-radio-inline"><input {$data.is_show==0 ? "checked" :""}  type="radio" name="is_show" value="0">否</label>
+				</div>
+			</div>
+
+			<div class="am-form-group">
+				<label class="am-para-label">是否禁用：</label>
+				<div class="am-para-input">
+					<label class="am-radio-inline"><input {$data.status==1 ? "checked" :""}  type="radio" name="status" value="1">否</label>
+					<label class="am-radio-inline">
+						<input type="radio" name="status" value="0" {$data.status==0 ? "checked" :""}>是</label>
 				</div>
 			</div>
 

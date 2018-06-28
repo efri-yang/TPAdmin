@@ -64,6 +64,19 @@ class Tree {
         return $this->ret;
     }
 
+    /**
+     * 横向分类树
+     */
+    static public function hTree($arr, $pid = 0) {
+        foreach ($arr as $k => $v) {
+            if ($v['pid'] == $pid) {
+                $data[$v['id']] = $v;
+                $data[$v['id']]['sub'] = self::hTree2($arr, $v['id']);
+            }
+        }
+        return isset($data) ? $data : array();
+    }
+
     public function getChild2($id, $data) {
         $arr = array();
         foreach ($data as $k => $v) {

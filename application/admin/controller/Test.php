@@ -43,8 +43,8 @@ class Test extends Controller {
     }
 
     public function test() {
-        $date = time();
-        return $date;
+
+        $resDel = Db::table("think_admin_menus")->delete([98]);
     }
 }
 ?>

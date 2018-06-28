@@ -137,7 +137,7 @@ class AdminMenu extends Base {
                     $rule = Db::table("think_auth_group")->where("id", 1)->value("rules");
                     $ruleArr = explode(",", $rule);
                     //如果当前新增的id又在rule字段面就不管如果没有，就添加
-                    if (!in_array($resInsertId, $ruleArr)) {
+                    if (!in_array($resInsertRuleId, $ruleArr)) {
                         //id加入
                         $ruleArr[] = $resInsertRuleId;
                         Db::table("think_auth_group")->where("id", 1)->update(["rules" => implode(",", $ruleArr)]);

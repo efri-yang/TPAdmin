@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-06-28 05:02:24
+-- Generation Time: 2018-06-28 06:33:04
 -- 服务器版本： 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -66,21 +66,16 @@ INSERT INTO `think_auth_rules` (`id`, `name`, `title`, `type`, `status`, `condit
 (21, 'admin/sysconfig/edit', '编辑设置', 1, 1, '', 21),
 (22, 'admin/sysconfig/del', '删除设置', 1, 1, '', 22),
 (23, 'admin/admin_user/profile', '个人资料', 1, 1, '', 23),
-
 (24, 'admin/classify/index', '分类管理', 1, 1, '', 24),
 (25, 'admin/classify/categorylist', '分类列表', 1, 1, '', 25),
 (26, 'admin/classify/add', '添加分类', 1, 1, '', 26),
 (27, 'admin/classify/del', '删除分类', 1, 1, '', 27),
 (28, 'admin/classify/edit', '编辑分类', 1, 1, '', 28),
-
-
-
-
-(28, 'admin/article/index', '文章管理', 1, 1, '', 28),
-(71, 'admin/article/del', '删除文章', 1, 1, '', 40),
-(60, 'admin/article/add', '添加文章', 1, 1, '', 29),
-(62, 'admin/article/articlelist', '文章列表', 1, 1, '', 31),
-(65, 'admin/article/edit', '编辑文章', 1, 1, '', 34);
+(29, 'admin/article/index', '文章管理', 1, 1, '', 29),
+(30, 'admin/article/articlelist', '文章列表', 1, 1, '', 30),
+(31, 'admin/article/del', '删除文章', 1, 1, '', 31),
+(32, 'admin/article/add', '添加文章', 1, 1, '', 32),
+(33, 'admin/article/edit', '编辑文章', 1, 1, '', 33);
 
 --
 -- Indexes for dumped tables
@@ -101,7 +96,7 @@ ALTER TABLE `think_auth_rules`
 -- 使用表AUTO_INCREMENT `think_auth_rules`
 --
 ALTER TABLE `think_auth_rules`
-  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

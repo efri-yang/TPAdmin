@@ -67,104 +67,101 @@ class Role extends Base {
         //删除一个角色的时候，think_auth_group_access表中所有用户拥有该角色的都要进行id删除
         //所以这个地方需要用到事务操作
         //问题来了，如果网站有很多用户，这下子要怎么办，需要遍历所有的用户然后对于每个进行删除
-        $trans_flag=true;
-        $authGroup=new AuthGroup();
+        $trans_flag = true;
+        $authGroup = new AuthGroup();
         $authGroup->startTrans();
 
-        $authGroupAccess=new AuthGroupAccess();
+        $authGroupAccess = new AuthGroupAccess();
         $authGroupAccess->startTrans();
 
-        if ($authGroup->where("id",$id)->delete()) {
-            if(!!$authGroupAccess->where("group_id",$id)->find() && $authGroupAccess->where("group_id",$id)->delete()===0){
-                $trans_flag=false;
+        if ($authGroup->where("id", $id)->delete()) {
+            if (!!$authGroupAccess->where("group_id", $id)->find() && $authGroupAccess->where("group_id", $id)->delete() === 0) {
+                $trans_flag = false;
             }
-        }else{
-            $trans_flag=false;
+        } else {
+            $trans_flag = false;
         }
 
-        if($trans_flag){
+        if ($trans_flag) {
             $authGroup->commit();
             $authGroupAccess->commit();
             $this->success('删除成功！', 'index');
-        }else{
+        } else {
             $authGroup->rollback();
             $authGroupAccess->rollback();
-            $this->error('删除失败！','index');
+            $this->error('删除失败！', 'index');
         }
 
     }
-    public function access($id) {
-        //$id角色id
-        //获取角色id 对应的角色信息
-        if ($this->request->isPost()) {
-            //获取数据
-            $param = $this->request->param();
-            $rulesId = implode(",", $param["auth"]);
+    //授权操作
+    public function access() {
+        $id = $this->request->param("id");
+        //获取角色信息数据
+        $role = AuthGroup::get($id)->toArray();
+        //获取角色 对应的权限id 数组
+        $ruleCheck = explode(",", $role["rules"]);
 
-            //更新数据
-            $authGroup = AuthGroup::get($id);
-            $authGroup->rules = $rulesId;
-            //save方法的更新判断失败用 false === 来判断， 否则执行都是成功的，只是如果为0 表示没有更新任何记录（就是你说的更新值和原来值相同的情况）。
-            if ($authGroup->save() === false) {
-                $url = url('access', ['id' => $id]);
-                $this->error('更新失败！', $url);
-            } else {
-                $this->success('更新成功！', 'index');
-            }
+        //获取表中所有的权限(为什么menu而不是rules),* 表示所有，column 第二个参数表示设置的键名
+        $ruleAll = Db::table("think_auth_rules")->order(["id" => "asc"])->column("*", "id");
 
-            //update group
+        print_r($ruleAll);
+        //从auth_rules中判断哪些是在$ruleCheck 里面的，然后返回menu_id吗,然后在menus表中根据menu_id 整合数据
+        $authRules = new AuthRules();
+        //从auth_rules当中获取当前角色拥有的menu_id
+        $roleRule = $authRules->whereIn('id', $ruleCheck)->column('id');
 
-        } else {
+        //从admin_menus 当中去
 
-            $role = AuthGroup::get($id)->toArray();
+        //获取所有的权限规则(id作为键值)
 
-            //获取角色 对应的权限id 数组
-            $ruleCheck = explode(",", $role["rules"]);
+        //进行字符窜操作
+        function getStr($levelId, $ruleCheck, $data, $str = "", $first = true, $num = 0) {
+            $tree = new Tree();
+            $child = $tree->getChild($levelId, $data);
 
-            //获取表中所有的权限(为什么menu而不是rules),* 表示所有，column 第二个参数表示设置的键名
-            $menuAll = Db::table("think_admin_menus")->order(["sort_id" => "asc", "menu_id" => "asc"])->column("*", "menu_id");
+            foreach ($child as $key => $value) {
+                $subChild = $tree->getChild($value["id"], $data);
+                $classFWStr = $num == 0 ? '' : 'fwnormal';
+                $checked = in_array($value["id"], $ruleCheck) ? "checked" : "";
+                if ($subChild) {
+                    $classStr = $num == 0 ? 'J_parent_top' : 'J_parent';
+                    $str .= '<li class="treeview"><div class="item"><label class="' . $classFWStr . '"><input type="checkbox" value="' . $value["id"] . '" name="auth[]" ' . $checked . ' class="mr5 J_checkbox ' . $classStr . '">' . $value["title"] . '</label><a href="#" class="fr J_toggleshow">收起</a></div><ul class="authadmin-item-list clearfix">';
+                    $num++;
+                    $str = getStr($value["id"], $ruleCheck, $data, $str, false, $num);
+                    $str .= "</ul></li>";
 
-            //从auth_rules中判断哪些是在$ruleCheck 里面的，然后返回menu_id吗,然后在menus表中根据menu_id 整合数据
-            $authRules = new AuthRules();
-            //从auth_rules当中获取当前角色拥有的menu_id
-            $roleRule = $authRules->whereIn('id', $ruleCheck)->column('menu_id');
+                } else {
+                    $classFWStr = !$first ? 'fwnormal' : "";
+                    //如果没有子元素 且第一个元素的时候
 
-            //从admin_menus 当中去
-
-            //获取所有的权限规则(id作为键值)
-
-            //进行字符窜操作
-            function getStr($levelId, $ruleCheck, $data, $str = "", $first = true, $num = 0) {
-                $tree = new Tree();
-                $child = $tree->getChild($levelId, $data);
-
-                foreach ($child as $key => $value) {
-                    $subChild = $tree->getChild($value["menu_id"], $data);
-                    $classFWStr = $num == 0 ? '' : 'fwnormal';
-                    $checked = in_array($value["menu_id"], $ruleCheck) ? "checked" : "";
-                    if ($subChild) {
-                        $classStr = $num == 0 ? 'J_parent_top' : 'J_parent';
-                        $str .= '<li class="treeview"><div class="item"><label class="' . $classFWStr . '"><input type="checkbox" value="' . $value["menu_id"] . '" name="auth[]" ' . $checked . ' class="mr5 J_checkbox ' . $classStr . '">' . $value["title"] . '</label><a href="#" class="fr J_toggleshow">收起</a></div><ul class="authadmin-item-list clearfix">';
-                        $num++;
-                        $str = getStr($value["menu_id"], $ruleCheck, $data, $str, false, $num);
-                        $str .= "</ul></li>";
-
-                    } else {
-                        $classFWStr = !$first ? 'fwnormal' : "";
-                        //如果没有子元素 且第一个元素的时候
-
-                        $str .= '<li><div class="item"><label class="' . $classFWStr . '"><input type="checkbox" value="' . $value["menu_id"] . '" name="auth[]" ' . $checked . ' class="mr5 J_checkbox J_single">' . $value['title'] . '</label></div></li>';
-                    }
+                    $str .= '<li><div class="item"><label class="' . $classFWStr . '"><input type="checkbox" value="' . $value["id"] . '" name="auth[]" ' . $checked . ' class="mr5 J_checkbox J_single">' . $value['title'] . '</label></div></li>';
                 }
-
-                return $str;
             }
-            $str = getStr(0, $ruleCheck, $menuAll);
 
-            $this->assign("ruleList", $str);
-            $this->assign("roleId", $id);
-            return $this->fetch();
+            return $str;
+        }
+        $str = getStr(0, $ruleCheck, $ruleAll);
 
+        $this->assign("ruleList", $str);
+        $this->assign("roleId", $id);
+        return $this->fetch();
+
+    }
+
+    public function accessPost() {
+//获取数据
+        $param = $this->request->param();
+        $rulesId = implode(",", $param["auth"]);
+
+        //更新数据
+        $authGroup = AuthGroup::get($id);
+        $authGroup->rules = $rulesId;
+        //save方法的更新判断失败用 false === 来判断， 否则执行都是成功的，只是如果为0 表示没有更新任何记录（就是你说的更新值和原来值相同的情况）。
+        if ($authGroup->save() === false) {
+            $url = url('access', ['id' => $id]);
+            $this->error('更新失败！', $url);
+        } else {
+            $this->success('更新成功！', 'index');
         }
     }
 

@@ -43,13 +43,15 @@ class Test extends Controller {
     }
 
     public function test() {
+        $res = Db::table("think_auth_rules")->where("menu_id", "in", [33, 37])->column("id");
+        print_r($res);
 
-        try {
-            Db::table("think_test")->where("id", 12)->find();
-        } catch (\Exception $e) {
-            Db::rollback();
-            $this->error("添加失败！", "add", '', 3);
-        }
+        // try {
+        //     Db::table("think_test")->where("id", 12)->find();
+        // } catch (\Exception $e) {
+        //     Db::rollback();
+        //     $this->error("添加失败！", "add", '', 3);
+        // }
     }
 }
 ?>

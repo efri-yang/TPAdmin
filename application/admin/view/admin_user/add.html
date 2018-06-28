@@ -30,7 +30,7 @@
             <div class="am-form-group">
                 <label class="am-para-label">密码确认：</label>
                 <div class="am-para-input">
-                	<input type="password"  value="{$Think.session.form_info.password|default=''}" required  minlength="6" data-equal-to="#J_password" placeholder="输入密码(至少6个字符)" />
+                	<input type="password"  value="{$Think.session.form_info.password|default=''}" required  minlength="6" data-equal-to="#J_password" name="password_confirm" placeholder="输入密码(至少6个字符)" />
                 </div>
             </div>
 

@@ -238,57 +238,10 @@ class AdminMenu extends Base {
 
                 } catch (\Exception $e) {
                     Db::rollback();
-                    $this->error("添加失败！", "add", '', 3);
+                    $this->error("添加失败！", url("edit", ["id" => $params["id"]]));
                 }
 
                 $this->success("添加成功！", "index");
-
-                // $flag = true;
-
-                // Db::startTrans();
-
-                // $resUpdate = Db::table("think_admin_menus")->where("id", $params["id"])->update($data);
-
-                // if ($resUpdate !== false) {
-                //     //如果更新成功，接下去接着操作auth_rule
-                //     $resSel = Db::table("think_auth_rules")->where("menu_id", $params["id"])->find();
-                //     if ($resSel) {
-                //         $ruleData = [
-                //             'title' => $params["title"],
-                //             'name' => $params["url"],
-                //             'status' => $params["status"],
-                //         ];
-                //         $resUpdate = Db::table("think_auth_rules")->where("menu_id", $params["id"])->update($ruleData);
-                //         if ($resUpdate === false) {
-
-                //             $flag = false;
-                //         }
-                //     } else {
-                //         $ruleData = [
-                //             'title' => $params["title"],
-                //             'name' => $params["url"],
-                //             'status' => $params["status"],
-                //             'menu_id' => $params["id"],
-                //         ];
-
-                //         $resInsert = Db::table("think_auth_rules")->insert($ruleData);
-                //         if (!$resInsert) {
-                //             $flag = false;
-                //         }
-                //     }
-                // } else {
-
-                //     $flag = false;
-                // }
-                // if (!$flag) {
-                //     Db::rollback();
-                //     Session::set('data', $params);
-                //     $this->error("修改失败！", url("edit", ["id" => $params["id"]]));
-                // } else {
-                //     Db::commit();
-                //     Session::set('data', "");
-                //     $this->error("修改成功！", "index");
-                // }
             }
         } else {
             $this->error("非法请求！", "index");
@@ -322,24 +275,21 @@ class AdminMenu extends Base {
         if ($resDel) {
 
             //删除好menu 接着要删除rule
+            $delRuleId = Db::table("think_auth_rules")->where("menu_id", "in", $arr)->column("id");
             $resDel = Db::table("think_auth_rules")->where("menu_id", "in", $arr)->delete();
 
             if ($resDel) {
-
-                //紧接着删除think_auth_group 中该menu 对应的id
+                //紧接着删除think_auth_group  对应的对应的ruleid
                 $resSel = Db::table("think_auth_group")->column("*", "id");
 
                 foreach ($resSel as $key => $value) {
                     $groupRule = explode(",", $value["rules"]);
-
                     foreach ($groupRule as $k => $v) {
-                        if (in_array($v, $arr)) {
+                        if (in_array($v, $delRuleId)) {
                             //如果在arr里面，那么就要删除
                             unset($groupRule[$k]);
-
                         }
                     }
-
                     $resUpdate = Db::table("think_auth_group")->where("id", $key)->update(["rules" => implode(",", $groupRule)]);
                     if ($resUpdate === false) {
                         $flag = false;

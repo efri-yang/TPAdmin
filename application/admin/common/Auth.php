@@ -175,7 +175,7 @@ class Auth {
             'type' => $type,
             'status' => 1,
         );
-        $rules = Db::name($this->config['auth_rule'])->where($map)->field('condition,name,menu_id')->select();
+        $rules = Db::name($this->config['auth_rule'])->where($map)->field('condition,name')->select();
         $authList = [];
         foreach ($rules as $rule) {
             if (!empty($rule['condition'])) {
@@ -185,10 +185,10 @@ class Auth {
                 //执行$command 条件并将结果返回给condition(0 或者 1)
                 @(eval('$condition=(' . $command . ');'));
                 if ($condition) {
-                    $authList[] = strtolower($rule['menu_id']);
+                    $authList[] = strtolower($rule['name']);
                 }
             } else {
-                $authList[] = strtolower($rule['menu_id']);
+                $authList[] = strtolower($rule['name']);
             }
         }
         $_authList[$uid . $t] = $authList;

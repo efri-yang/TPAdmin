@@ -71,16 +71,18 @@ INSERT INTO `think_admin_menus` (`id`, `pid`, `is_show`, `title`, `url`, `param`
 (21, 19, 0, '编辑设置', 'admin/sysconfig/edit', '', '', 0, 1, 0, 0, 1),
 (22, 19, 0, '删除设置', 'admin/sysconfig/del', '', '', 0, 1, 0, 0, 1),
 (23, 2, 1, '个人资料', 'admin/admin_user/profile', '', '', 0, 1, 0, 0, 1),
-(28, 0, 1, '文章管理', 'admin/article/index', '', 'lanmu', 0, 1, 0, 0, 1),
-(29, 28, 1, '添加文章', 'admin/article/add', '', 'add', 0, 1, 0, 0, 1),
-(31, 28, 1, '文章列表', 'admin/article/articlelist', '', 'xxxx', 0, 1, 0, 0, 1),
-(34, 28, 0, '编辑文章', 'admin/article/edit', '', 'xx', 0, 1, 0, 0, 1),
-(35, 0, 1, '分类管理', 'admin/classify/index', '', 'xx', 0, 900, 0, 0, 1),
-(36, 35, 1, '分类列表', 'admin/classify/categorylist', '', 'icon-xx', 0, 1, 0, 0, 1),
-(37, 35, 1, '添加分类', 'admin/classify/add', '', 'icon-add', 0, 1, 0, 0, 1),
-(38, 35, 0, '删除分类', 'admin/classify/del', '', 'icon-del', 0, 1, 0, 0, 1),
-(39, 35, 0, '编辑分类', 'admin/classify/edit', '', 'icon-edit', 0, 1, 0, 0, 1),
-(40, 28, 0, '删除文章', 'admin/article/del', '', 'icon-del', 0, 1, 0, 0, 1);
+
+(24, 0, 1, '分类管理', 'admin/classify/index', '', 'xx', 0, 900, 0, 0, 1),
+(25, 24, 1, '分类列表', 'admin/classify/categorylist', '', 'icon-xx', 0, 1, 0, 0, 1),
+(26, 24, 1, '添加分类', 'admin/classify/add', '', 'icon-add', 0, 1, 0, 0, 1),
+(27, 24, 0, '删除分类', 'admin/classify/del', '', 'icon-del', 0, 1, 0, 0, 1),
+(28, 24, 0, '编辑分类', 'admin/classify/edit', '', 'icon-edit', 0, 1, 0, 0, 1),
+
+(29, 0, 1, '文章管理', 'admin/article/index', '', 'lanmu', 0, 1, 0, 0, 1),
+(30, 29, 0, '删除文章', 'admin/article/del', '', 'icon-del', 0, 1, 0, 0, 1),
+(31, 29, 1, '添加文章', 'admin/article/add', '', 'add', 0, 1, 0, 0, 1),
+(32, 29, 1, '文章列表', 'admin/article/articlelist', '', 'xxxx', 0, 1, 0, 0, 1),
+(33, 29, 0, '编辑文章', 'admin/article/edit', '', 'xx', 0, 1, 0, 0, 1);
 
 --
 -- Indexes for dumped tables

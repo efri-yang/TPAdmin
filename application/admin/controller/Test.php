@@ -44,7 +44,12 @@ class Test extends Controller {
 
     public function test() {
 
-        $resDel = Db::table("think_admin_menus")->delete([98]);
+        try {
+            Db::table("think_test")->where("id", 12)->find();
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->error("添加失败！", "add", '', 3);
+        }
     }
 }
 ?>

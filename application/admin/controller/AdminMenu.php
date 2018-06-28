@@ -116,74 +116,40 @@ class AdminMenu extends Base {
 
             //判断是否通过验证 验证通过就提示添加成功 然后跳转到index 如果失败
             $params = $this->request->param();
-          
+
             $validate = new Validate($rule, $message);
             if (!$validate->check($params)) {
                 $this->error($validate->getError(), "add");
             } else {
                 //验证通过 就要插入,这里要启用事务
-                $flag = false;
                 Db::startTrans();
 
-
-                try{
+                try {
                     $resInsertId = Db::table("think_admin_menus")->insertGetId($params);
                     $rule_data = [
                         'title' => $params['title'],
                         'name' => $params['url'],
-                        'status'=>$params['status'],
-                        'menu_id' => $resInsertId
+                        'status' => $params['status'],
+                        'menu_id' => $resInsertId,
                     ];
-                    Db::table("think_auth_rules")->insertGetId($rule_data);
+                    $resInsertRuleId = Db::table("think_auth_rules")->insertGetId($rule_data);
                     //去处理group中的rule，而且只处理超级管理员(超级管理员拥有全部的权限) id=1
-                    $rule=Db::table("think_auth_group")->where("id",1)->value("rules");
-                    $ruleArr=explode(",",$rule);
+                    $rule = Db::table("think_auth_group")->where("id", 1)->value("rules");
+                    $ruleArr = explode(",", $rule);
                     //如果当前新增的id又在rule字段面就不管如果没有，就添加
-                    if(!in_array($resInsertId,$ruleArr)){
+                    if (!in_array($resInsertId, $ruleArr)) {
                         //id加入
-                        $ruleArr[]=$resInsertId;
-                        Db::table("think_auth_group")->where("id",1)->update(["rules"=>implode(",",$ruleArr)]);
+                        $ruleArr[] = $resInsertRuleId;
+                        Db::table("think_auth_group")->where("id", 1)->update(["rules" => implode(",", $ruleArr)]);
                     }
                     Db::commit();
 
-                }catch (\Exception $e) {
-                    Db::rollback(); 
-                    $this->error("添加失败！", "add",'',3);
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    $this->error("添加失败！", "add", '', 3);
                 }
-
-                $this->success("添加成功！", "index",'',3); 
-
-               
-
-                // $resInsertId = Db::table("think_admin_menus")->insertGetId($params);
-                // if (!$resInsertId) {
-                //     $flag = false;
-                // } else {
-
-                //     $rule_data = [
-                //         'title' => $params['title'],
-                //         'name' => $params['url'],
-                //         'menu_id' => $resInsertId,
-                //     ];
-                //     $resInsert = Db::table("think_auth_rules")->insertGetId($rule_data);
-                //     if (!$resInsert) {
-                //         $flag = false;
-                //     }else{
-                //         //去处理group中的rule，而且只处理超级管理员(超级管理员拥有全部的权限) id=1
-                //         $resSel=Db::table("think_auth_group")->where("id",1)->value("rules");
-                //         print_r($resSel);
-                        
-                //     }
-                // }
-
-                // //如果menus表中添加数据成功，那么就要往
-                // if (!$flag) {
-                //     Db::rollback();
-                //     $this->error("添加失败！", "add");
-                // } else {
-                //     Db::commit();
-                    
-                // }
+                //不能放在try里面，不然会抛出catch错误
+                $this->success("添加成功！", "index", '', 3);
             }
 
         }
@@ -215,7 +181,6 @@ class AdminMenu extends Base {
     //修改的时候不需要修改 group 里面的rule
     public function editPost() {
         if ($this->request->isPost()) {
-
             $rule = [
                 'pid' => 'require',
                 'title' => 'require',
@@ -247,14 +212,11 @@ class AdminMenu extends Base {
                 $data["log_type"] = $params["log_type"];
                 $data["status"] = $params["status"];
 
-                $flag = true;
-
                 Db::startTrans();
 
-                $resUpdate = Db::table("think_admin_menus")->where("id", $params["id"])->update($data);
-
-                if ($resUpdate !== false) {
-                    //如果更新成功，接下去接着操作auth_rule
+                try {
+                    //update不报错就不会报错(数据完全一样，没有更新也不会抛出错误)
+                    Db::table("think_admin_menus")->where("id", $params["id"])->update($data);
                     $resSel = Db::table("think_auth_rules")->where("menu_id", $params["id"])->find();
                     if ($resSel) {
                         $ruleData = [
@@ -262,38 +224,71 @@ class AdminMenu extends Base {
                             'name' => $params["url"],
                             'status' => $params["status"],
                         ];
-                        $resUpdate = Db::table("think_auth_rules")->where("menu_id", $params["id"])->update($ruleData);
-                        if ($resUpdate === false) {
-
-                            $flag = false;
-                        }
+                        Db::table("think_auth_rules")->where("menu_id", $params["id"])->update($ruleData);
                     } else {
+                        //rule表中不存在就要插入
                         $ruleData = [
                             'title' => $params["title"],
                             'name' => $params["url"],
                             'status' => $params["status"],
                             'menu_id' => $params["id"],
                         ];
-
-                        $resInsert = Db::table("think_auth_rules")->insert($ruleData);
-                        if (!$resInsert) {
-                            $flag = false;
-                        }
+                        Db::table("think_auth_rules")->insert($ruleData);
                     }
-                } else {
 
-                    $flag = false;
-                }
-                if (!$flag) {
+                } catch (\Exception $e) {
                     Db::rollback();
-                    Session::set('data', $params);
-                    $this->error("修改失败！", url("edit", ["id" => $params["id"]]));
-                } else {
-                    Db::commit();
-                    Session::set('data', "");
-                    $this->error("修改成功！", "index");
+                    $this->error("添加失败！", "add", '', 3);
                 }
 
+                $this->success("添加成功！", "index");
+
+                // $flag = true;
+
+                // Db::startTrans();
+
+                // $resUpdate = Db::table("think_admin_menus")->where("id", $params["id"])->update($data);
+
+                // if ($resUpdate !== false) {
+                //     //如果更新成功，接下去接着操作auth_rule
+                //     $resSel = Db::table("think_auth_rules")->where("menu_id", $params["id"])->find();
+                //     if ($resSel) {
+                //         $ruleData = [
+                //             'title' => $params["title"],
+                //             'name' => $params["url"],
+                //             'status' => $params["status"],
+                //         ];
+                //         $resUpdate = Db::table("think_auth_rules")->where("menu_id", $params["id"])->update($ruleData);
+                //         if ($resUpdate === false) {
+
+                //             $flag = false;
+                //         }
+                //     } else {
+                //         $ruleData = [
+                //             'title' => $params["title"],
+                //             'name' => $params["url"],
+                //             'status' => $params["status"],
+                //             'menu_id' => $params["id"],
+                //         ];
+
+                //         $resInsert = Db::table("think_auth_rules")->insert($ruleData);
+                //         if (!$resInsert) {
+                //             $flag = false;
+                //         }
+                //     }
+                // } else {
+
+                //     $flag = false;
+                // }
+                // if (!$flag) {
+                //     Db::rollback();
+                //     Session::set('data', $params);
+                //     $this->error("修改失败！", url("edit", ["id" => $params["id"]]));
+                // } else {
+                //     Db::commit();
+                //     Session::set('data', "");
+                //     $this->error("修改成功！", "index");
+                // }
             }
         } else {
             $this->error("非法请求！", "index");

@@ -343,9 +343,9 @@ class Auth {
         $uid = Session::get('user.user_id');
 
         if ($uid == 1) {
-            $menus = Db::name('admin_menus')->where('is_show=1')->order(["sort_id" => "asc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
+            $menus = Db::name('admin_menus')->where('is_show=1')->order(["sort_id" => "desc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
         } else {
-            $menus = Db::name('admin_menus')->where($map_menu)->order(["sort_id" => "asc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
+            $menus = Db::name('admin_menus')->where($map_menu)->order(["sort_id" => "desc", 'id' => 'asc'])->field('id,title,url,icon,is_show,pid')->column('*', 'id');
         }
 
         return $menus;

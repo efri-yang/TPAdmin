@@ -76,7 +76,7 @@ class AdminMenu extends Base {
     public function add() {
         //超级管理员拥有全部的权限，所以添加的菜单要把id 添加到权限中
         //而且要考虑事务处理(设计到多个表的数据操作)
-        //添加的时候不需要处理think_auth_group
+        //添加的时候需要处理think_auth_group中的超级管理员的rule
 
         $tree = new Tree();
         $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ '];
@@ -116,40 +116,74 @@ class AdminMenu extends Base {
 
             //判断是否通过验证 验证通过就提示添加成功 然后跳转到index 如果失败
             $params = $this->request->param();
-
+          
             $validate = new Validate($rule, $message);
             if (!$validate->check($params)) {
                 $this->error($validate->getError(), "add");
             } else {
                 //验证通过 就要插入,这里要启用事务
-                $flag = true;
+                $flag = false;
                 Db::startTrans();
 
-                $resInsertId = Db::table("think_admin_menus")->insertGetId($params);
-                if (!$resInsertId) {
 
-                    $flag = false;
-                } else {
-
+                try{
+                    $resInsertId = Db::table("think_admin_menus")->insertGetId($params);
                     $rule_data = [
                         'title' => $params['title'],
                         'name' => $params['url'],
-                        'menu_id' => $resInsertId,
+                        'status'=>$params['status'],
+                        'menu_id' => $resInsertId
                     ];
-                    $resInsert = Db::table("think_auth_rules")->insert($rule_data);
-                    if (!$resInsert) {
-                        $flag = false;
+                    Db::table("think_auth_rules")->insertGetId($rule_data);
+                    //去处理group中的rule，而且只处理超级管理员(超级管理员拥有全部的权限) id=1
+                    $rule=Db::table("think_auth_group")->where("id",1)->value("rules");
+                    $ruleArr=explode(",",$rule);
+                    //如果当前新增的id又在rule字段面就不管如果没有，就添加
+                    if(!in_array($resInsertId,$ruleArr)){
+                        //id加入
+                        $ruleArr[]=$resInsertId;
+                        Db::table("think_auth_group")->where("id",1)->update(["rules"=>implode(",",$ruleArr)]);
                     }
+                    Db::commit();
+
+                }catch (\Exception $e) {
+                    Db::rollback(); 
+                    $this->error("添加失败！", "add",'',3);
                 }
 
-                //如果menus表中添加数据成功，那么就要往
-                if (!$flag) {
-                    Db::rollback();
-                    $this->error("添加失败！", "add");
-                } else {
-                    Db::commit();
-                    $this->error("添加成功！", "index");
-                }
+                $this->success("添加成功！", "index",'',3); 
+
+               
+
+                // $resInsertId = Db::table("think_admin_menus")->insertGetId($params);
+                // if (!$resInsertId) {
+                //     $flag = false;
+                // } else {
+
+                //     $rule_data = [
+                //         'title' => $params['title'],
+                //         'name' => $params['url'],
+                //         'menu_id' => $resInsertId,
+                //     ];
+                //     $resInsert = Db::table("think_auth_rules")->insertGetId($rule_data);
+                //     if (!$resInsert) {
+                //         $flag = false;
+                //     }else{
+                //         //去处理group中的rule，而且只处理超级管理员(超级管理员拥有全部的权限) id=1
+                //         $resSel=Db::table("think_auth_group")->where("id",1)->value("rules");
+                //         print_r($resSel);
+                        
+                //     }
+                // }
+
+                // //如果menus表中添加数据成功，那么就要往
+                // if (!$flag) {
+                //     Db::rollback();
+                //     $this->error("添加失败！", "add");
+                // } else {
+                //     Db::commit();
+                    
+                // }
             }
 
         }

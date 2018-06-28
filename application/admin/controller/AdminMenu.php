@@ -77,43 +77,23 @@ class AdminMenu extends Base {
         //超级管理员拥有全部的权限，所以添加的菜单要把id 添加到权限中
         //而且要考虑事务处理(设计到多个表的数据操作)
         //添加的时候需要处理think_auth_group中的超级管理员的rule
-
-        $tree = new Tree();
-        $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ '];
-        $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
-        $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'id' => 'asc'])->column('*', 'id');
-        $tree->init($result);
-        $pSelTpl = "<option  value='\$id'>\$spacer\$title</option>";
-        $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$title</option>";
-        $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
-        $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
-        $this->assign([
-            "pSelStr" => $pSelStr,
-        ]);
-        return $this->fetch("add");
-
-    }
-
-    public function addPost() {
-        $rule = [
-            'pid' => 'require',
-            'title' => 'require',
-            'url' => 'require',
-            'sort_id' => 'require|number',
-            'log_type', 'require',
-
-        ];
-        $message = [
-            'pid' => '上级菜单不能为空',
-            'title' => '标题不能为空',
-            'url' => 'url不能为空',
-            'sort_id.require' => '请输入排序id',
-            'sort_id.number' => '排序id必须是数字',
-            'log_type' => '日志记录方式不能为空',
-        ];
-
         if ($this->request->isPost()) {
+            $rule = [
+                'pid' => 'require',
+                'title' => 'require',
+                'url' => 'require',
+                'sort_id' => 'require|number',
+                'log_type', 'require',
 
+            ];
+            $message = [
+                'pid' => '上级菜单不能为空',
+                'title' => '标题不能为空',
+                'url' => 'url不能为空',
+                'sort_id.require' => '请输入排序id',
+                'sort_id.number' => '排序id必须是数字',
+                'log_type' => '日志记录方式不能为空',
+            ];
             //判断是否通过验证 验证通过就提示添加成功 然后跳转到index 如果失败
             $params = $this->request->param();
 
@@ -151,35 +131,26 @@ class AdminMenu extends Base {
                 //不能放在try里面，不然会抛出catch错误
                 $this->success("添加成功！", "index", '', 3);
             }
-
+        } else {
+            $tree = new Tree();
+            $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ '];
+            $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+            $result = Db::table("think_admin_menus")->order(["sort_id" => "desc", 'id' => 'asc'])->column('*', 'id');
+            $tree->init($result);
+            $pSelTpl = "<option  value='\$id'>\$spacer\$title</option>";
+            $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$title</option>";
+            $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
+            $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
+            $this->assign([
+                "pSelStr" => $pSelStr,
+            ]);
+            return $this->fetch("add");
         }
+
     }
 
     public function edit() {
         //获取编辑的id
-        $id = $this->request->param("id");
-        $tree = new Tree();
-        $tree->icon = ['&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ '];
-        $tree->nbsp = '&nbsp;&nbsp;';
-        //通过id 获取数据
-        $currMenuData = Db::table("think_admin_menus")->where('id', $id)->find();
-
-        //当前的菜单上级不可能数据它自己，所以取数据的时候就要忽略
-        $menuData = Db::table("think_admin_menus")->where("id", "<>", $id)->order(["sort_id" => "asc", 'id' => 'asc'])->column('*', 'id');
-        $tree->init($menuData);
-        $menuTpl = "<option \$selected  value='\$id'>\$spacer\$title</option>";
-        $menuFirstTpl = "<option \$selected  value='\$id'>&nbsp;&nbsp;├─\$title</option>";
-        $menuStr = $tree->getTree(0, $menuTpl, $currMenuData["pid"], "", $menuFirstTpl);
-        $menuStr = "<option value='0'>根目录</option>" . $menuStr;
-        $this->assign([
-            'optionList' => $menuStr,
-            'data' => $currMenuData,
-        ]);
-        return $this->fetch();
-    }
-
-    //修改的时候不需要修改 group 里面的rule
-    public function editPost() {
         if ($this->request->isPost()) {
             $rule = [
                 'pid' => 'require',
@@ -244,7 +215,25 @@ class AdminMenu extends Base {
                 $this->success("添加成功！", "index");
             }
         } else {
-            $this->error("非法请求！", "index");
+            $id = $this->request->param("id");
+            $tree = new Tree();
+            $tree->icon = ['&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ '];
+            $tree->nbsp = '&nbsp;&nbsp;';
+            //通过id 获取数据
+            $currMenuData = Db::table("think_admin_menus")->where('id', $id)->find();
+
+            //当前的菜单上级不可能数据它自己，所以取数据的时候就要忽略
+            $menuData = Db::table("think_admin_menus")->where("id", "<>", $id)->order(["sort_id" => "asc", 'id' => 'asc'])->column('*', 'id');
+            $tree->init($menuData);
+            $menuTpl = "<option \$selected  value='\$id'>\$spacer\$title</option>";
+            $menuFirstTpl = "<option \$selected  value='\$id'>&nbsp;&nbsp;├─\$title</option>";
+            $menuStr = $tree->getTree(0, $menuTpl, $currMenuData["pid"], "", $menuFirstTpl);
+            $menuStr = "<option value='0'>根目录</option>" . $menuStr;
+            $this->assign([
+                'optionList' => $menuStr,
+                'data' => $currMenuData,
+            ]);
+            return $this->fetch();
         }
 
     }

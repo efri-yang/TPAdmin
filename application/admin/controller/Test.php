@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\controller;
+use app\admin\common\Auth;
 use app\admin\common\Tree2;
 use think\Controller;
 use think\Db;
@@ -43,8 +44,7 @@ class Test extends Controller {
     }
 
     public function test() {
-        $res = Db::table("think_auth_rules")->where("menu_id", "in", [33, 37])->column("id");
-        print_r($res);
+        Auth::isSuperAdmin(2);
 
         // try {
         //     Db::table("think_test")->where("id", 12)->find();

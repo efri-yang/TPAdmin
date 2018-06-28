@@ -43,10 +43,12 @@ class Auth {
         if (Session::get("user.user_id") == 1) {
             return true;
         }
+
         //权限开关关闭，那么所有人都有权限
         if (!$this->config['auth_on']) {
             return true;
         }
+
         //获取权限列表
         $authList = $this->getAuthList($uid, $type);
 
@@ -86,8 +88,10 @@ class Auth {
                     $list[] = $auth;
                 }
             } else {
+
                 //不是url的模式的时候 只要url 对应就可以
                 if (in_array($auth, $name)) {
+
                     $list[] = $auth;
                 }
             }
@@ -99,6 +103,7 @@ class Auth {
         }
         //比较数组$name(传进来的url) 和$list(通过的验证规则的url),并返回返回差集
         $diff = array_diff($name, $list);
+
         if ($relation == "and" && empty($diff)) {
             return true;
         }
@@ -148,7 +153,9 @@ class Auth {
      * 根据用户id 获取属于哪些用户组，然后将用户组的权限合并！！！
      */
     protected function getAuthList($uid, $type) {
+
         static $_authList = [];
+
         $t = implode(',', (array) $type);
 
         if (isset($_authList[$uid . $t])) {
@@ -378,6 +385,20 @@ class Auth {
             Cookie::delete('user_sign');
         }
         return true;
+    }
+    //static里面不能用this
+    public function isSuperAdmin($uid) {
+        $groups = $this->getGroups($uid);
+        $len = count($groups);
+        foreach ($groups as $key => $value) {
+            if ($value["group_id"] == 1) {
+                return true;
+            } else {
+                if ($key == $len) {
+                    return false;
+                }
+            }
+        }
     }
 
 }

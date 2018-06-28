@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\common\Auth;
 use app\admin\model\AuthGroup;
 use app\admin\model\AuthGroupAccess;
 use app\admin\model\AuthUser;
@@ -29,31 +30,6 @@ class AdminUser extends Base {
     }
     //添加的时候，只有超级管理员，其他不可以设置
     public function add() {
-        $uid = $this->webData["userinfo"]['id'];
-        $groupIdObj = AuthGroupAccess::where(["uid" => $uid])->field('group_concat(group_id) as group_id')->group('uid')->find();
-        if ($groupIdObj) {
-            $groupId = $groupIdObj->toArray();
-        } else {
-            $groupId = false;
-        }
-        if ($uid == 1 || in_array(1, $groupId)) {
-            //超级管理员
-            $data = AuthGroup::all()->toArray();
-        } else {
-            $data = AuthGroup::all(function ($query) {
-                $query->where("id", ">", 1);
-            })->toArray();
-        }
-        $this->assign("data", $data);
-        return $this->fetch();
-
-    }
-
-    //添加用户的时候会关联到用户表和think_auth_group_access，因为用户是属于什么角色需要关联到其他表
-    //两次密码不一样怎么办
-
-    public function addPost() {
-
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $rule = [
@@ -118,46 +94,31 @@ class AdminUser extends Base {
                 }
             }
         } else {
-            $this->error("非法请求！", "index");
+            $uid = $this->webData["userinfo"]['id'];
+            $groupIdObj = AuthGroupAccess::where(["uid" => $uid])->field('group_concat(group_id) as group_id')->group('uid')->find();
+            if ($groupIdObj) {
+                $groupId = $groupIdObj->toArray();
+            } else {
+                $groupId = false;
+            }
+            if ($uid == 1 || in_array(1, $groupId)) {
+                //超级管理员
+                $data = AuthGroup::all()->toArray();
+            } else {
+                $data = AuthGroup::all(function ($query) {
+                    $query->where("id", ">", 1);
+                })->toArray();
+            }
+            $this->assign("data", $data);
+            return $this->fetch();
         }
+
     }
+
+    //添加用户的时候会关联到用户表和think_auth_group_access，因为用户是属于什么角色需要关联到其他表
+    //两次密码不一样怎么办
 
     public function edit() {
-        $id = $this->request->param("id");
-        //获取用户信息
-        $authUser = AuthUser::get($id)->toArray();
-
-        //获取所有的角色
-        $groupList = AuthGroup::all()->toArray();
-        //获取当前用户所拥有的角色
-        $groupIdObj = AuthGroupAccess::where(["uid" => $id])->field('group_concat(group_id) as group_id')->group('uid')->find();
-        //考虑当前用户假设没有任何角色的时候返回的是null所以调用$groupIdObj->toArray()就会报错
-        if ($groupIdObj) {
-            $groupId = $groupIdObj->toArray();
-        } else {
-            $groupId = false;
-        }
-        //编辑角色，标注哪些是选中
-        foreach ($groupList as $key => $value) {
-            if (!!$groupId) {
-                if (in_array($value["id"], explode(",", $groupId["group_id"]))) {
-                    $groupList[$key]["checked"] = 1;
-                } else {
-                    $groupList[$key]["checked"] = 0;
-                }
-            } else {
-                $groupList[$key]["checked"] = 0;
-            }
-        }
-
-        $this->assign([
-            "data" => $authUser,
-            "groupList" => $groupList,
-        ]);
-
-        return $this->fetch();
-    }
-    public function editPost() {
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $id = $param["id"];
@@ -201,9 +162,51 @@ class AdminUser extends Base {
                 $authGroupAccess->rollBack();
                 $this->error("修改失败！", url("edit", ["id" => $id]));
             }
+        } else {
+            $id = $this->request->param("id");
+            //获取用户信息
+            $authUser = AuthUser::get($id)->toArray();
 
+            //获取所有的角色
+            $auth = new Auth();
+            if ($auth->isSuperAdmin($this->webData['userinfo']["id"])) {
+                $groupList = AuthGroup::all()->toArray();
+            } else {
+                $groupList = AuthGroup::all(function ($query) {
+                    $query->where("id", '<>', 1);
+                })->toArray();
+            }
+
+            //获取当前用户所拥有的角色
+            $groupIdObj = AuthGroupAccess::where(["uid" => $id])->field('group_concat(group_id) as group_id')->group('uid')->find();
+            //考虑当前用户假设没有任何角色的时候返回的是null所以调用$groupIdObj->toArray()就会报错
+            if ($groupIdObj) {
+                $groupId = $groupIdObj->toArray();
+            } else {
+                $groupId = false;
+            }
+            //编辑角色，标注哪些是选中
+            foreach ($groupList as $key => $value) {
+                if (!!$groupId) {
+                    if (in_array($value["id"], explode(",", $groupId["group_id"]))) {
+                        $groupList[$key]["checked"] = 1;
+                    } else {
+                        $groupList[$key]["checked"] = 0;
+                    }
+                } else {
+                    $groupList[$key]["checked"] = 0;
+                }
+            }
+
+            $this->assign([
+                "data" => $authUser,
+                "groupList" => $groupList,
+            ]);
+
+            return $this->fetch();
         }
     }
+
     //删除设计两个表 用户表和AuthGroupAccess表
     public function del() {
 

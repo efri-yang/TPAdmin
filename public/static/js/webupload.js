@@ -4,7 +4,7 @@
 
 
  var uploader = WebUploader.create({
-    
+
      pick: {
          id: '#filePicker',
          label: '点击上传本地头像'
@@ -21,7 +21,7 @@
      swf: '/MyProject/src/MyPhpCms/TPAdmin/public/static/js/plugin/webuploader-0.1.5/Uploader.swf',
      //限制文件的大小
      fileSingleSizeLimit: 2 * 1024 * 1024,
-     fileNumLimit:1,
+     fileNumLimit: 1,
      fileSizeLimit: 4 * 1024 * 1024
  });
  console.dir(uploader);
@@ -155,15 +155,15 @@
                          uploader.removeFile(file, true);
                          $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
 
-                         
+
                      }
                  }
 
              })
          } else {
              uploader.removeFile(file, true);
-             
-         } 
+
+         }
      })
 
  }
@@ -238,8 +238,8 @@
      } else {
          uploader.fileCount++;
          uploader.fileSize += file.size;
-         if($(".uploading-img-list").children("li").length && uploader.options.fileNumLimit==1){
-            $(".uploading-img-list").html("");
+         if ($(".uploading-img-list").children("li").length && uploader.options.fileNumLimit == 1) {
+             $(".uploading-img-list").html("");
          }
          if (uploader.fileCount > 0) {
              uploader.refresh();
@@ -337,7 +337,7 @@
      // console.dir(uploader.getFiles("progress"));
      // console.dir(uploader.getFiles("complete"))
      $("#" + file.id).attr("data-url", response);
-   
+
      $("#J_covering").val(response);
 
 
@@ -380,6 +380,37 @@
              showError("文件上传出错！");
      }
  });
+
+
+ $(function() {
+  
+     $(".uploading-img-list .success-edit-del").on("click", function(event) {
+
+         event.preventDefault();
+         var $li = $(this).parent("li");
+         var url = $li.data("url");
+         var index = url.lastIndexOf("/");
+         var imgName = url.slice(index + 1);
+         $.ajax({
+             url: "/MyProject/src/MyPhpCms/TPAdmin/public/static/php/delfile.php",
+             type: "post",
+             data: { filename: imgName },
+             dataType: "json",
+             success: function(data) {
+                 if (data == 1) {
+                     $li.remove();
+                     showError("删除成功！");
+                     uploader.removeFile(file, true);
+                     $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
+
+
+                 }
+             }
+
+         })
+     })
+
+ })
 
  //*****点击上传按钮**************************************************
  //  $uploadBtn.on("click", function(event) {

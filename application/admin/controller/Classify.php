@@ -1,7 +1,6 @@
 <?php
 namespace app\admin\controller;
 use app\admin\common\Auth;
-use app\admin\common\Tree2;
 use app\admin\common\Tree;
 use think\Controller;
 use think\Db;
@@ -17,50 +16,51 @@ class Classify extends Base {
     public function add() {
         //获取所有的分类
         $tree = new Tree();
+        $tree->icon = ['&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
+        $tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;';
         $resData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
+
         $tree->init($resData);
-        
-        if($this->request->isPost()){
+
+        if ($this->request->isPost()) {
             $params = $this->request->param();
-            
-        }else{
-            
+            $sid = $params["id"];
+        } else {
+            $sid = "";
         }
-        
-        
+
+        $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
+        $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
+        $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
+        $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
         //未分类是不可能有子分类的，所以要筛选数据的时候
-       
 
-       
-
-        $classifyTpl = "<option \$selected  value='\$id'>\$spacer \$name</option>";
-
-        $classifyStr = $tree->getTree(0, $classifyTpl);
-
+        $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
+        //如果没有选中任何的分类，证明这个分类的属于一级分类下，所以不需要任何处理了
+        $pSelStr = "<option  value='0'>一级分类</option>" . $pSelStr;
         $this->assign([
-            "classifyStr" => $classifyStr,
+            "classifyStr" => $pSelStr,
         ]);
         return $this->fetch();
     }
 
     public function categorylist() {
-        $tree=new Tree();
+        $tree = new Tree();
         $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
-        $resData = Db::table("think_category")->order(["sort_id" => "desc", 'id' => 'asc'])->column("*","id");
+        $resData = Db::table("think_category")->order(["sort_id" => "desc", 'id' => 'asc'])->column("*", "id");
         foreach ($resData as $key => $value) {
             //未分类这个项不能删除和编辑的
-            if($key==1){
-                $resData[$key]["add"] =false;
-                $resData[$key]["edit"] =$resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
+            if ($key == 1) {
+                $resData[$key]["add"] = false;
+                $resData[$key]["edit"] = $resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
                 $resData[$key]["del"] = false;
-            }else{
+            } else {
                 $resData[$key]["add"] = '<a href="' . url('add', ["id" => $value["id"]]) . '">添加子分类</a>';
                 $resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
                 $resData[$key]["del"] = '<a href="' . url('del', ["id" => $value["id"]]) . '">删除</a>';
             }
         }
-
 
         $tree->init($resData);
 
@@ -77,7 +77,7 @@ class Classify extends Base {
         $classifyStr = $tree->getTree(0, $classifyTpl, "");
 
         $this->assign([
-            "classifyStr" => $classifyStr
+            "classifyStr" => $classifyStr,
         ]);
 
         return $this->fetch();
@@ -104,6 +104,42 @@ class Classify extends Base {
         }
     }
 
+    public function edit() {
+        $tree = new Tree();
+        $tree->icon = ['&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
+        $tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;';
+
+        $params = $this->request->param();
+        $id = $params["id"];
+
+        if ($this->request->isPost()) {
+
+        } else {
+            $classifyData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
+            $tree->init($classifyData);
+            $data = Db::table("think_category")->where("id", $id)->find();
+
+            $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
+            $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
+            $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
+            $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
+            //未分类是不可能有子分类的，所以要筛选数据的时候
+
+            $pSelStr = $tree->getTree(0, $pSelTpl, $id, "", $pSelTplGroup);
+            //如果没有选中任何的分类，证明这个分类的属于一级分类下，所以不需要任何处理了
+            $pSelStr = "<option  value='0'>一级分类</option>" . $pSelStr;
+            $this->assign([
+                "classifyStr" => $pSelStr,
+                "data" => $data,
+
+            ]);
+
+            return $this->fetch();
+
+        }
+
+    }
+
     public function del() {
         //删除分类，要考虑到：
         //那么该分类的文章不应被删除，而是修改为未分类
@@ -116,5 +152,6 @@ class Classify extends Base {
             $this->success("删除成功");
         }
     }
+
 }
 ?>

@@ -22,17 +22,16 @@ class Classify extends Base {
         
         if($this->request->isPost()){
             $params = $this->request->param();
-
+            
         }else{
             
         }
         
-        $id = @$params["id"] ? $params["id"] : "";
+        
         //未分类是不可能有子分类的，所以要筛选数据的时候
-        $resData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
+       
 
-
-        $tree = new Tree();
+       
 
         $classifyTpl = "<option \$selected  value='\$id'>\$spacer \$name</option>";
 

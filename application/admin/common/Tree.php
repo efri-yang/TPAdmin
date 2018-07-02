@@ -47,6 +47,7 @@ class Tree {
                 //如果没有前缀的时候,那么pid=0的menu 就是=》选项名，
                 //
                 $spacer = $adds ? $adds . $j : '';
+               
                 $selected = $id == $sid ? 'selected' : '';
 
                 $parentId = $value['pid'];

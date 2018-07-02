@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use app\admin\common\Auth;
 use app\admin\common\Tree2;
+use app\admin\common\Tree;
 use think\Controller;
 use think\Db;
 use think\Paginator;
@@ -15,16 +16,27 @@ class Classify extends Base {
 
     public function add() {
         //获取所有的分类
-        $params = $this->request->param();
-        $id = @$params["id"] ? $params["id"] : "";
+        $tree = new Tree();
         $resData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
-        $tree2 = new Tree2();
+        $tree->init($resData);
+        
+        if($this->request->isPost()){
+            $params = $this->request->param();
 
-        $needData = $tree2::hTree2($resData, 0);
+        }else{
+            
+        }
+        
+        $id = @$params["id"] ? $params["id"] : "";
+        //未分类是不可能有子分类的，所以要筛选数据的时候
+        $resData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
 
-        $classifyTpl = "<option \$selected  value='\$id'>\$space \$name</option>";
 
-        $classifyStr = $tree2->getTree($needData, $classifyTpl, $id, "", 1);
+        $tree = new Tree();
+
+        $classifyTpl = "<option \$selected  value='\$id'>\$spacer \$name</option>";
+
+        $classifyStr = $tree->getTree(0, $classifyTpl);
 
         $this->assign([
             "classifyStr" => $classifyStr,
@@ -33,31 +45,42 @@ class Classify extends Base {
     }
 
     public function categorylist() {
-        $resData = Db::table("think_category")->where("id", "<>", 1)->select();
-
+        $tree=new Tree();
+        $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
+        $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+        $resData = Db::table("think_category")->order(["sort_id" => "desc", 'id' => 'asc'])->column("*","id");
         foreach ($resData as $key => $value) {
-            $resData[$key]["add"] = '<a href="' . url('add', ["id" => $value["id"]]) . '">添加子分类</a>';
-            $resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
-            $resData[$key]["del"] = '<a href="' . url('del', ["id" => $value["id"]]) . '">删除</a>';
+            //未分类这个项不能删除和编辑的
+            if($key==1){
+                $resData[$key]["add"] =false;
+                $resData[$key]["edit"] =$resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
+                $resData[$key]["del"] = false;
+            }else{
+                $resData[$key]["add"] = '<a href="' . url('add', ["id" => $value["id"]]) . '">添加子分类</a>';
+                $resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
+                $resData[$key]["del"] = '<a href="' . url('del', ["id" => $value["id"]]) . '">删除</a>';
+            }
         }
-        $tree2 = new Tree2();
-        $realData = $tree2::hTree2($resData);
 
-        $realData = $tree2::sort($realData, "sort_id");
+
+        $tree->init($resData);
+
         $classifyTpl = "<tr>";
         $classifyTpl .= "<td>\$sort_id</td>";
         $classifyTpl .= "<td>\$id</td>";
-        $classifyTpl .= "<td class='align-l'>\$space \$name</td>";
+        $classifyTpl .= "<td class='align-l'>\$spacer \$name</td>";
         $classifyTpl .= "<td>\$description</td>";
         $classifyTpl .= "<td class='hander'>";
         $classifyTpl .= "\$add \$edit \$del";
         $classifyTpl .= "</td>";
         $classifyTpl .= "</tr>";
 
-        $classifyStr = $tree2->getTree($realData, $classifyTpl);
+        $classifyStr = $tree->getTree(0, $classifyTpl, "");
+
         $this->assign([
-            "classifyStr" => $classifyStr,
+            "classifyStr" => $classifyStr
         ]);
+
         return $this->fetch();
     }
 

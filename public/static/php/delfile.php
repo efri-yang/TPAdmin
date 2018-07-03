@@ -27,16 +27,6 @@ function delFile($filename) {
     return $mes;
 }
 
-$arr = readDirectory("/Upload/");
 $fileName = $_POST["filename"];
-foreach ($arr["file"] as $key => $value) {
-    if ($value == $fileName) {
-        unlink("/Upload/" . $value);
-        echo 1;
-        return;
-    }
-}
-
-echo 0;
 
 ?>

@@ -1,7 +1,7 @@
 <div class="p15">
     {include file="common/breadcrumb" /}
     <div class="am-form am-form-horizontal">
-        <form data-am-validator method="post" action="{:url('addpost')}">
+        <form data-am-validator method="post" action="{:url('edit',['id'=>$data.id])}">
             <div class="am-form-group">
                 <label class="am-para-label">上级：</label>
                 <div class="am-para-input">
@@ -13,7 +13,7 @@
             <div class="am-form-group">
                 <label class="am-para-label">分类名称：</label>
                 <div class="am-para-input">
-                    <input type="text" required name="cname" value="{$data.name}" />
+                    <input type="text" required name="name" value="{$data.name}" />
                 </div>
             </div>
             <div class="am-form-group">
@@ -26,13 +26,19 @@
                 <label class="am-para-label">封面图：</label>
                 <div class="am-para-input">
                     <div class="coms-upload-single-box">
-                        {eq name="$data.coverimg" value=""}
-                        <div class="no-pic" id="J_no-pic"></div>
-                        {else/}
-                        <ul class="uploading-img-list clearfix" id="J_uploader-list">
-                            <li data-url="{$data.coverimg}"><div class="img-wrap"><img src="{$data.coverimg}" class="img-upload" style="display:block;"></div><span class="success-del success-edit-del" style="display:block; "><i class="iconfont icon-shanchu"></i></span></li>
+                        <style type="text/css">
+                            .no-pic.none{
+                                display: none;
+                            }
+                        </style>
+                        <div class='no-pic {if condition="$data.coverimg"}none{/if}' id="J_no-pic"></div> 
+                        <ul class='uploading-img-list clearfix' id="J_uploader-list">
+                            {if condition="$data.coverimg"}
+                            <li data-url="{$data.coverimg}"><div class="img-wrap"><img src="{$data.coverimg}" class="img-upload" style="display:inline-block;vertical-align: middle;"></div><span class="success-del success-edit-del" style="display:block; "><i class="iconfont icon-shanchu"></i></span></li>
+                            {/if}
+                           
                         </ul>
-                        {/eq}
+                       
                         <div class="upload-btn-group clearfix">
                             <span class="mask"></span>
                             <div id="filePicker" class="filepicker-container"></div>
@@ -80,4 +86,34 @@
 <script type="text/javascript" src="__STATIC__/js/plugin/webuploader-0.1.5/webuploader.min.js"></script>
 <link rel="stylesheet" type="text/css" href="__STATIC__/js/plugin/webuploader-0.1.5/webuploader.css" />
 <script type="text/javascript" src="__STATIC__/js/webupload.js"></script>
+<script type="text/javascript">
+$(function() {
 
+     $(".uploading-img-list .success-edit-del").on("click", function(event) {
+
+         event.preventDefault();
+         var $li = $(this).parent("li");
+         var url = $li.data("url");
+
+         // var index = url.lastIndexOf("/");
+
+         // var imgName = url.slice(index + 1);
+         $.ajax({
+             url: "{:url('fileImgDel')}",
+             type: "post",
+             data: {"filename": url,"id":{$data.id}},
+             dataType: "json",
+             success: function(data) {
+                 if (data == 1) {
+                     $li.remove();
+                     showError("删除成功！");
+                     $("#J_no-pic").removeClass("none");
+                     $("#J_covering").val("");
+                 }
+             }
+
+         })
+     })
+
+ })
+</script>

@@ -1,7 +1,7 @@
 <?php
 namespace app\admin\controller;
 use app\admin\common\Auth;
-use app\admin\common\Tree2;
+use app\admin\common\Tree;
 use think\Controller;
 use think\Db;
 use think\Paginator;
@@ -22,7 +22,7 @@ class Article extends Base {
 
     public function add() {
         //这个是有问题的，假设有子集的时候
-        //
+
         //如果是提交表单的时候 这个时候要根据事务 把文章和标签对应放到tagmap
         if ($this->request->isPost()) {
             //对于文章的标签，那么插入的时候就要
@@ -50,22 +50,25 @@ class Article extends Base {
                     'create_time' => time(),
                 ];
 
-                $tagIdArray = explode(",", $params["tagid"]);
-
                 $insertResult = Db::table('think_article')->insertGetId($insertData);
 
                 if ($insertResult) {
 
-                    foreach ($tagIdArray as $key => $value) {
-                        $insertTagMap[$key]["tagid"] = $value;
-                        $insertTagMap[$key]["aid"] = $insertResult;
+                    if ($params["tagid"]) {
+                        $tagIdArray = explode(",", $params["tagid"]);
+                        $tagData = Db::table("think_tag")->where("id", "in", $tagIdArray)->select();
+                        foreach ($tagIdArray as $key => $value) {
+                            $insertTagMap[$key]["tagid"] = $value;
+                            $insertTagMap[$key]["aid"] = $insertResult;
+                            Db::table("think_tag")->where("id", $tagData[$key]["id"])->update(["num" => $tagData[$key]["num"] + 1]);
+                        }
+                        $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
+
+                        if (!$insertMapResult) {
+                            $flag = false;
+                        }
                     }
 
-                    $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
-
-                    if (!$insertMapResult) {
-                        $flag = false;
-                    }
                 } else {
                     $flag = false;
                 }
@@ -81,14 +84,15 @@ class Article extends Base {
             }
 
         } else {
-            $data = Db::table("think_category")->column("*", "id");
-            $tree2 = new Tree2();
+            $resData = Db::table("think_category")->column("*", "id");
+            $tree = new Tree();
+            $tree->icon = ['&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
+            $tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;';
+            $tree->init($resData);
 
-            $realData = $tree2::hTree2($data, 0);
+            $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
 
-            $tplFenLei = "<option  value='\$id'>\$space \$name</option>";
-
-            $tplStr = $tree2->getTree($realData, $tplFenLei);
+            $tplStr = $tree->getTree(0, $pSelTpl, "");
 
             $this->assign([
                 "selOption" => $tplStr,
@@ -99,33 +103,43 @@ class Article extends Base {
     }
 
     public function articlelist() {
-        $list = Db::table('think_article')->paginate(10);
+
+        // $list = Db::table('think_article')->paginate(10);
+        $list = Db::view("think_article", "*")->view('think_category', 'name as cname', 'think_article.classifyid=think_category.id')->paginate(10);
         $page = $list->render();
         $this->assign('list', $list);
+
         $this->assign('page', $page);
         return $this->fetch();
     }
     public function tagList() {
 
         $resData = Db::table("think_tag")->field('id,name')->select();
-        if ($aid = @$_POST["aid"]) {
+        $aid = $this->request->param("aid");
+
+        if ($aid) {
             //取得当前文章对应的分类id
             $atagId = Db::table("think_tagmap")->field('group_concat(tagid) as tagid')->where("aid", $aid)->group("aid")->select();
 
-            $tagIdArr = explode(",", $atagId[0]["tagid"]);
+            if ($atagId) {
+                $tagIdArr = explode(",", $atagId[0]["tagid"]);
 
-            foreach ($resData as $key => $value) {
-                if (in_array($value["id"], $tagIdArr)) {
+                foreach ($resData as $key => $value) {
+                    if (in_array($value["id"], $tagIdArr)) {
 
-                    $resData[$key]["selected"] = 1;
+                        $resData[$key]["selected"] = 1;
+                    }
                 }
             }
+
         }
 
         return $resData;
     }
 
     public function del() {
+        //删除文章记得删除对应标签中的数量，设计三个表article tagmap tag,
+        //所以要启动事务
         $params = $this->request->param();
         if (!!$params["id"]) {
             $res = Db::table("think_article")->delete($params["id"]);
@@ -143,55 +157,75 @@ class Article extends Base {
         $params = $this->request->param();
 
         if ($this->request->isPost()) {
+            //涉及tagmap category article 表 所以启动事务
             date_default_timezone_set('PRC');
-            $resCount = Db::table("think_article")->where('id', $params["id"])->update([
-                'classifyid' => $params["classifyid"],
-                'title' => $params["title"],
-                'keyword' => $params["keyword"],
-                'description' => $params["description"],
-                'coverimg' => $params['coverimg'],
-                'content' => addslashes($params['content']),
-                'author' => $params["author"],
-                'tags' => $params["tags"],
-                'tagid' => $params["tagid"],
-                'iscomment' => $params["iscomment"],
-                'update_time' => time(),
-            ]);
-            if ($resCount) {
-                //先删除 tapmap中对应aid 的值，然后重新插入
-                Db::table("think_tagmap")->where("aid", $params["id"])->delete();
-                $tagIdArray = explode(",", $params["tagid"]);
-                foreach ($tagIdArray as $key => $value) {
-                    $insertTagMap[$key]["tagid"] = $value;
-                    $insertTagMap[$key]["aid"] = $params["id"];
-                }
-
-                $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
-
-                if ($insertMapResult) {
-                    $this->success("更新成功！", "articlelist");
-                } else {
-                    $this->success("更新失败！", "articlelist");
-                }
-
+            //获取原来的tagId
+            $oldTagId = Db::table("think_article")->where('id', $params["id"])->value("tagid");
+            if ($oldTagId) {
+                $oldTagIdArr = explode(",", $oldTagId);
             } else {
-                $this->success("更新失败！", "articlelist");
+                $oldTagIdArr = [];
             }
+
+            Db::startTrans();
+
+            try {
+                //更新article中的表
+                Db::table("think_article")->where('id', $params["id"])->update([
+                    'classifyid' => $params["classifyid"],
+                    'title' => $params["title"],
+                    'keyword' => $params["keyword"],
+                    'description' => $params["description"],
+                    'coverimg' => $params['coverimg'],
+                    'content' => addslashes($params['content']),
+                    'author' => $params["author"],
+                    'tags' => $params["tags"],
+                    'tagid' => $params["tagid"],
+                    'iscomment' => $params["iscomment"],
+                    'update_time' => time(),
+                ]);
+                Db::table("think_tagmap")->where("aid", $params["id"])->delete();
+                if ($params["tagid"]) {
+                    $newTagIdArray = explode(",", $params["tagid"]);
+                    foreach ($newTagIdArray as $key => $value) {
+                        $insertTagMap[$key]["tagid"] = $value;
+                        $insertTagMap[$key]["aid"] = $params["id"];
+                    }
+                    Db::table('think_tagmap')->insertAll($insertTagMap);
+                    $tagAllData = Db::table("think_tag")->select();
+                    foreach ($tagAllData as $k => $v) {
+
+                        if (!in_array($v["id"], $oldTagIdArr) && in_array($v["id"], $newTagIdArray)) {
+                            Db::table("think_tag")->where("id", $v["id"])->update(["num" => ($v["num"] + 1)]);
+
+                        }
+                        if (in_array($v["id"], $oldTagIdArr) && !in_array($v["id"], $newTagIdArray)) {
+                            Db::table("think_tag")->where("id", $v["id"])->update(["num" => ($v["num"] - 1)]);
+                        }
+                    }
+
+                    Db::commit();
+
+                }
+
+            } catch (\Exception $e) {
+                Db::rollback();
+                $this->error("添加失败！", "articlelist", '', 3);
+            }
+            $this->success("更新成功！", "articlelist");
+
         } else {
-            $data = Db::table("think_category")->column("*", "id");
+            //生成分类的select
+            $resData = Db::table("think_category")->column("*", "id");
+            $tree = new Tree();
+            $tree->init($resData);
 
-            $tree2 = new Tree2();
-            $realData = array();
-
-            $realData = $tree2::hTree2($data, 0);
-
-            $tplFenLei = "<option \$selected  value='\$id'>\$space \$name</option>";
+            $tplFenLei = "<option \$selected  value='\$id'>\$spacer \$name</option>";
+            $tplStr = $tree->getTree(0, $tplFenLei, "");
 
             $dataArticle = Db::table("think_article")->where("id", $params["id"])->find();
-
             $dataArticle['content'] = stripslashes($dataArticle['content']);
-            $tplStr = $tree2->getTree($realData, $tplFenLei, $dataArticle["classifyid"]);
-            Session::set('form_info', $dataArticle);
+
             $tagId = explode(",", $dataArticle["tagid"]);
             $tags = explode(",", $dataArticle["tags"]);
 
@@ -202,13 +236,23 @@ class Article extends Base {
             $this->assign([
                 "selOption" => $tplStr,
                 "aid" => $params["id"],
-                "article" => $dataArticle,
+                "data" => $dataArticle,
                 "tags" => json_encode($tagArr),
             ]);
 
         }
 
         return $this->fetch();
+    }
+    public function fileImgDel() {
+        $param = $this->request->param();
+        $old = $param["filename"];
+        if (@unlink($_SERVER['DOCUMENT_ROOT'] . $param["filename"])) {
+            Db::table("think_article")->where("id", $param["id"])->update(["coverimg" => ""]);
+            echo 1;
+        } else {
+            echo 0;
+        }
     }
 }
 ?>

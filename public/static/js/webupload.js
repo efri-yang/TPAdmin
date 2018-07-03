@@ -382,35 +382,7 @@
  });
 
 
- $(function() {
-  
-     $(".uploading-img-list .success-edit-del").on("click", function(event) {
-
-         event.preventDefault();
-         var $li = $(this).parent("li");
-         var url = $li.data("url");
-         var index = url.lastIndexOf("/");
-         var imgName = url.slice(index + 1);
-         $.ajax({
-             url: "/MyProject/src/MyPhpCms/TPAdmin/public/static/php/delfile.php",
-             type: "post",
-             data: { filename: imgName },
-             dataType: "json",
-             success: function(data) {
-                 if (data == 1) {
-                     $li.remove();
-                     showError("删除成功！");
-                     uploader.removeFile(file, true);
-                     $(uploader.options.pick.id).removeClass("disabled").siblings(".mask").hide();
-
-
-                 }
-             }
-
-         })
-     })
-
- })
+ 
 
  //*****点击上传按钮**************************************************
  //  $uploadBtn.on("click", function(event) {

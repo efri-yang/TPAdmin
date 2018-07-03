@@ -21,27 +21,42 @@ class Classify extends Base {
         $resData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
 
         $tree->init($resData);
-
+        $params = $this->request->param();
         if ($this->request->isPost()) {
-            $params = $this->request->param();
-            $sid = $params["id"];
+            //添加分类
+            $insertData["pid"] = $params["pid"];
+            $insertData["name"] = $params["cname"];
+            $insertData["description"] = $params["description"];
+            $insertData["coverimg"] = $params["coverimg"];
+            $insertData["sort_id"] = $params["sort_id"];
+            $insertData["seo_title"] = $params["seotitle"];
+            $insertData["seo_keyword"] = $params["seokeyword"];
+            $insertData["seo_description"] = $params["seodescription"];
+
+            $insertRes = Db::table("think_category")->insert($insertData);
+
+            if ($insertRes) {
+                $this->success("添加成功！", "categorylist");
+            } else {
+                $this->error("添加失败！", "categorylist");
+            }
+
         } else {
-            $sid = "";
+            $sid = @$params["id"] ? @$params["id"] : "";
+            $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
+            $pSelTplGroup = "<option \$selected  value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
+            $pSelStr = $tree->getTree(0, $pSelTpl, $sid, "", $pSelTplGroup);
+            $pSelStr = "<option  value='0'>一级分类</option>" . $pSelStr;
+            $this->assign([
+                "classifyStr" => $pSelStr,
+            ]);
+            return $this->fetch();
         }
 
-        $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
-        $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
-        $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
-        $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
         //未分类是不可能有子分类的，所以要筛选数据的时候
 
-        $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
         //如果没有选中任何的分类，证明这个分类的属于一级分类下，所以不需要任何处理了
-        $pSelStr = "<option  value='0'>一级分类</option>" . $pSelStr;
-        $this->assign([
-            "classifyStr" => $pSelStr,
-        ]);
-        return $this->fetch();
+
     }
 
     public function categorylist() {
@@ -83,27 +98,6 @@ class Classify extends Base {
         return $this->fetch();
     }
 
-    public function addpost() {
-        $params = $this->request->param();
-
-        $insertData["pid"] = $params["pid"];
-        $insertData["name"] = $params["cname"];
-        $insertData["description"] = $params["description"];
-        $insertData["coverimg"] = $params["coverimg"];
-        $insertData["sort_id"] = $params["sort_id"];
-        $insertData["seo_title"] = $params["seotitle"];
-        $insertData["seo_keyword"] = $params["seokeyword"];
-        $insertData["seo_description"] = $params["seodescription"];
-
-        $insertRes = Db::table("think_category")->insert($insertData);
-
-        if ($insertRes) {
-            $this->success("添加成功！", "categorylist");
-        } else {
-            $this->error("添加成功！", "categorylist");
-        }
-    }
-
     public function edit() {
         $tree = new Tree();
         $tree->icon = ['&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
@@ -113,27 +107,38 @@ class Classify extends Base {
         $id = $params["id"];
 
         if ($this->request->isPost()) {
+            $data["pid"] = $params["pid"];
+            $data["name"] = $params["name"];
+            $data["coverimg"] = $params["coverimg"];
+            $data["description"] = $params["description"];
+            $data["sort_id"] = $params["sort_id"];
+            $data["seo_title"] = $params["seotitle"];
+            $data["seo_keyword"] = $params["seokeyword"];
+            $data["seo_description"] = $params["seodescription"];
 
+            $resUpdate = Db::table("think_category")->where("id", $id)->update($data);
+            if ($resUpdate !== false) {
+                $this->success("修改成功！", "categorylist");
+            } else {
+                $this->success("修改失败！", "categorylist");
+            }
         } else {
             $classifyData = Db::table("think_category")->where("id", "<>", 1)->column("*", "id");
             $tree->init($classifyData);
             $data = Db::table("think_category")->where("id", $id)->find();
 
             $pSelTpl = "<option  \$selected value='\$id'>\$spacer\$name</option>";
-            $pSelTplGroup = "<option  value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
-            $pSelStr = $tree->getTree(0, $pSelTpl, "", "", $pSelTplGroup);
-            $pSelStr = "<option selected value='0'>根目录</option>" . $pSelStr;
+            $pSelTplGroup = "<option \$selected value='\$id'>&nbsp;&nbsp;├─ \$name</option>";
+
             //未分类是不可能有子分类的，所以要筛选数据的时候
 
-            $pSelStr = $tree->getTree(0, $pSelTpl, $id, "", $pSelTplGroup);
+            $pSelStr = $tree->getTree(0, $pSelTpl, $data["pid"], "", $pSelTplGroup);
             //如果没有选中任何的分类，证明这个分类的属于一级分类下，所以不需要任何处理了
             $pSelStr = "<option  value='0'>一级分类</option>" . $pSelStr;
             $this->assign([
                 "classifyStr" => $pSelStr,
                 "data" => $data,
-
             ]);
-
             return $this->fetch();
 
         }
@@ -150,6 +155,18 @@ class Classify extends Base {
         $delRes = Db::table("think_category")->where("id", $id)->delete();
         if ($delRes) {
             $this->success("删除成功");
+        }
+    }
+
+    public function fileImgDel() {
+        $param = $this->request->param();
+        $old = $param["filename"];
+
+        if (@unlink($_SERVER['DOCUMENT_ROOT'] . $param["filename"])) {
+            Db::table("think_category")->where("id", $param["id"])->update(["coverimg" => ""]);
+            echo 1;
+        } else {
+            echo 0;
         }
     }
 

@@ -44,14 +44,9 @@ class Test extends Controller {
     }
 
     public function test() {
-        Auth::isSuperAdmin(2);
+        $res = Db::view("think_article", "*")->view('think_category', 'name as cname', 'think_article.classifyid=think_category.id')->select();
 
-        // try {
-        //     Db::table("think_test")->where("id", 12)->find();
-        // } catch (\Exception $e) {
-        //     Db::rollback();
-        //     $this->error("添加失败！", "add", '', 3);
-        // }
+        print_r($res);
     }
 }
 ?>

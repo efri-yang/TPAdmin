@@ -14,7 +14,7 @@
                 <div class="am-form-group">
                     <label class="am-para-label">标题：</label>
                     <div class="am-para-input">
-                        <input type="text" minlength="3" placeholder="请输入标题" required name="title" value="{$Think.session.form_info.title|default=''}" />
+                        <input type="text" minlength="3" placeholder="请输入标题" required name="title" value="{$data.title|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
@@ -51,65 +51,66 @@
                         </ul>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_choice-tag-btn">选择标签</a>
                         <a href="#" class="am-btn am-btn-success am-round" id="J_add-tag-btn">添加标签</a>
-                        <input type="hidden" name="tags" id="J_ipt-tags" value="{$article.tags}">
-                        <input type="hidden" name="tagid" id="J_ipt-tagid" value="{$article.tagid}">
+                        <input type="hidden" name="tags" id="J_ipt-tags" value="{$data.tags}">
+                        <input type="hidden" name="tagid" id="J_ipt-tagid" value="{$data.tagid}">
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">文章缩略图:</label>
                     <div class="am-para-input">
                         <div class="coms-upload-single-box">
-                            {eq name="$Think.session.form_info.coverimg" value=""}
-                            <div class="no-pic" id="J_no-pic"></div>
-                            {else/}
-                            <ul class="uploading-img-list clearfix" id="J_uploader-list">
-                                <li data-src="">
-                                    <div class="img-wrap">
-                                        <img src="{$Think.session.form_info.coverimg}" class="img-upload" style="display:inline-block;vertical-align: middle;">
-                                    </div>
-                                </li>
+                            <style type="text/css">
+                            .no-pic.none {
+                                display: none;
+                            }
+                            </style>
+                            <div class='no-pic {if condition="$data.coverimg"}none{/if}' id="J_no-pic"></div>
+                            <ul class='uploading-img-list clearfix' id="J_uploader-list">
+                                {if condition="$data.coverimg"}
+                                <li data-url="{$data.coverimg}">
+                                    <div class="img-wrap"><img src="{$data.coverimg}" class="img-upload" style="display:inline-block;vertical-align: middle;"></div><span class="success-del success-edit-del" style="display:block; "><i class="iconfont icon-shanchu"></i></span></li>
+                                {/if}
                             </ul>
-                            {/eq}
                             <div class="upload-btn-group clearfix">
                                 <span class="mask"></span>
                                 <div id="filePicker" class="filepicker-container"></div>
                             </div>
                         </div>
-                        <input type="hidden" value="{$Think.session.form_info.coverimg}" name="coverimg" id="J_covering" />
+                        <input type="hidden" value="{$data.coverimg}" name="coverimg" id="J_covering" />
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">关键词：</label>
                     <div class="am-para-input">
-                        <input type="text" placeholder="请输入关键词" name="keyword" value="{$Think.session.form_info.keyword|default=''}" />
+                        <input type="text" placeholder="请输入关键词" name="keyword" value="{$data.keyword|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">描述：</label>
                     <div class="am-para-input">
-                        <textarea class="" rows="3" id="doc-ta-1" name="description">{$Think.session.form_info.description|default=''}</textarea>
+                        <textarea class="" rows="3" id="doc-ta-1" name="description">{$data.description|default=''}</textarea>
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">作者：</label>
                     <div class="am-para-input">
-                        <input type="text" placeholder="请输入作者" name="author" value="{$Think.session.form_info.author|default=''}" />
+                        <input type="text" placeholder="请输入作者" name="author" value="{$data.author|default=''}" />
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">内容：</label>
                     <div class="am-para-input">
-                        <textarea class="am-validate" id="J_ue-content" name="content" required>{$Think.session.form_info.content|default=''} </textarea>
+                        <textarea class="am-validate" id="J_ue-content" name="content" required>{$data.content|default=''} </textarea>
                     </div>
                 </div>
                 <div class="am-form-group">
                     <label class="am-para-label">是否评论：</label>
                     <div class="am-para-input">
                         <label class="am-radio-inline">
-                            <input type="radio" value="1" {$Think.session.form_info.iscomment ? 'checked' : ''} name="iscomment">是
+                            <input type="radio" value="1" {$data.iscomment ? 'checked' : ''} name="iscomment">是
                         </label>
                         <label class="am-radio-inline">
-                            <input type="radio" value="0" {$Think.session.form_info.iscomment ? '' : 'checked'} name="iscomment">否
+                            <input type="radio" value="0" {$data.iscomment ? '' : 'checked'} name="iscomment">否
                         </label>
                     </div>
                 </div>
@@ -183,8 +184,8 @@ $(function() {
 
                 var str = "";
                 $.each(data, function(index, obj) {
-                    if(obj.selected){
-                        str += '<li class="am-btn am-btn-primary" data-index="'+index+'">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
+                    if (obj.selected) {
+                        str += '<li class="am-btn am-btn-primary" data-index="' + index + '">' + obj.name + '<span><i class="iconfont icon-shanchu"></i></span></li>';
                     }
                 });
                 $("#J_tag-list-choice").html(str);
@@ -317,4 +318,40 @@ $(function() {
         $('[name=content]').trigger('change');
     });
 })
+
+
+
+
+$(function() {
+
+     $(".uploading-img-list .success-edit-del").on("click", function(event) {
+
+         event.preventDefault();
+         var $li = $(this).parent("li");
+         var url = $li.data("url");
+
+         // var index = url.lastIndexOf("/");
+
+         // var imgName = url.slice(index + 1);
+         $.ajax({
+             url: "{:url('fileImgDel')}",
+             type: "post",
+             data: {"filename": url,"id":{$data.id}},
+             dataType: "json",
+             success: function(data) {
+                 if (data == 1) {
+                     $li.remove();
+                     showError("删除成功！");
+                     $("#J_no-pic").removeClass("none");
+                     $("#J_covering").val("");
+                 }else{
+                    showError("删除失败！");
+                 }
+             }
+
+         })
+     })
+
+ })
+
 </script>

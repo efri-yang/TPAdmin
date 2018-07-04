@@ -44,9 +44,12 @@ class Test extends Controller {
     }
 
     public function test() {
-        $res = Db::view("think_article", "*")->view('think_category', 'name as cname', 'think_article.classifyid=think_category.id')->select();
 
-        print_r($res);
+        $tagAllArr = Db::table("think_tag")->select();
+        foreach ($tagAllArr as $key => $value) {
+            print_r($value);
+        }
+
     }
 }
 ?>

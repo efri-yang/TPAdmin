@@ -64,6 +64,7 @@ class Classify extends Base {
         $tree->icon = ['&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ '];
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
         $resData = Db::table("think_category")->order(["sort_id" => "desc", 'id' => 'asc'])->column("*", "id");
+
         foreach ($resData as $key => $value) {
             //未分类这个项不能删除和编辑的
             if ($key == 1) {
@@ -72,8 +73,8 @@ class Classify extends Base {
                 $resData[$key]["del"] = false;
             } else {
                 $resData[$key]["add"] = '<a href="' . url('add', ["id" => $value["id"]]) . '">添加子分类</a>';
-                $resData[$key]["edit"] = '<a href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
-                $resData[$key]["del"] = '<a href="' . url('del', ["id" => $value["id"]]) . '">删除</a>';
+                $resData[$key]["edit"] = '<a class="J_edit" data-id="' . $value["id"] . '" href="' . url('edit', ["id" => $value["id"]]) . '">编辑</a>';
+                $resData[$key]["del"] = '<a   data-id="' . $value["id"] . '" class="J_del" href="' . url('del', ["id" => $value["id"]]) . '">删除</a>';
             }
         }
 
@@ -147,15 +148,55 @@ class Classify extends Base {
 
     public function del() {
         //删除分类，要考虑到：
+        //该分类子分类 都应该被删除
         //那么该分类的文章不应被删除，而是修改为未分类
-        //该分类子分类是否要删除
-        $params = $this->request->param();
-        $id = $params["id"];
 
-        $delRes = Db::table("think_category")->where("id", $id)->delete();
-        if ($delRes) {
-            $this->success("删除成功");
+        $tree = new Tree();
+        $classifyAllData = Db::table("think_category")->field('id,pid')->select();
+        $tree->init($classifyAllData);
+
+        $id = $this->request->param("id");
+        if ($this->request->isAjax()) {
+            //如果当前有子元素
+            if ($tree->getChild($id)) {
+                echo json_encode(["hasChild" => 1, "message" => "删除该元素,其子元素也将被删除！"]);
+            } else {
+                echo json_encode(["hasChild" => 0, "message" => "您确定删除该元素?"]);
+            }
+        } else {
+
+            $childArr = $tree->getChild($id);
+
+            $childArrId = [];
+            if ($childArr) {
+                foreach ($childArr as $key => $value) {
+                    $childArrId[] = $value["id"];
+                }
+            }
+
+            $childArrId[] = $id;
+            Db::startTrans();
+            try {
+                echo implode(",", $childArrId);
+                $res = Db::table("think_category")->delete(implode(",", $childArrId));
+
+                if ($res) {
+                    Db::table("think_article")->whereNull('classifyid')->update(["classifyid" => 1]);
+                }
+                Db::commit();
+            } catch (\Exception $e) {
+                $this->error("删除失败", "categorylist");
+            }
+            $this->success("删除成功", "categorylist");
+
         }
+
+        // $id = $params["id"];
+
+        // $delRes = Db::table("think_category")->where("id", $id)->delete();
+        // if ($delRes) {
+        //     $this->success("删除成功");
+        // }
     }
 
     public function fileImgDel() {

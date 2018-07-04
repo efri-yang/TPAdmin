@@ -3,9 +3,11 @@
     <div class="pl30 pr30 mt20">
         <div class="coms-table-wrap">
             <div class="coms-table-bd">
-            	<style type="text/css">
-					.hander a{margin:0 5px;}
-            	</style>
+                <style type="text/css">
+                .hander a {
+                    margin: 0 5px;
+                }
+                </style>
                 <table class="am-table am-table-bordered">
                     <thead>
                         <tr>
@@ -18,11 +20,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                    	{$classifyStr}
-                       
+                        {$classifyStr}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+$(function() {
+
+    $(".am-table .J_del").on("click", function(event) {
+        event.preventDefault();
+        var id = $(this).data("id");
+        var url=$(this).attr("href");
+        $.ajax({
+            url: "{:url('del')}",
+            type: "POST",
+            data: { "id": id },
+            dataType: "json",
+            success: function(data) {
+                layer.confirm(data.message, {
+                    btn: ['确定', '取消'] //按钮
+                }, function() {
+                    window.location.href=url;
+                }, function() {
+                    
+                });
+            }
+        })
+    })
+})
+</script>

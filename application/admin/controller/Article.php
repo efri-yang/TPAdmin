@@ -30,8 +30,8 @@ class Article extends Base {
             $result = $this->validate($params, 'ArticleAdd');
             $flag = true;
             date_default_timezone_set('PRC');
-            if (true !== $result) {
-                Session::set('form_info', $params);
+            if (true != $result) {
+
                 $this->error($result, "add");
             } else {
                 //验证通过以后就插入到数据库中
@@ -49,10 +49,11 @@ class Article extends Base {
                     'iscomment' => $params["iscomment"],
                     'create_time' => time(),
                 ];
+                Db::startTrans();
+                try {
+                    Db::table('think_article')->insert($insertData);
 
-                $insertResult = Db::table('think_article')->insertGetId($insertData);
-
-                if ($insertResult) {
+                    $insertResult = Db::table('think_article')->getLastInsID();
 
                     if ($params["tagid"]) {
                         $tagIdArray = explode(",", $params["tagid"]);
@@ -62,24 +63,15 @@ class Article extends Base {
                             $insertTagMap[$key]["aid"] = $insertResult;
                             Db::table("think_tag")->where("id", $tagData[$key]["id"])->update(["num" => $tagData[$key]["num"] + 1]);
                         }
-                        $insertMapResult = Db::table('think_tagmap')->insertAll($insertTagMap);
-
-                        if (!$insertMapResult) {
-                            $flag = false;
-                        }
+                        Db::table('think_tagmap')->insertAll($insertTagMap);
                     }
 
-                } else {
-                    $flag = false;
-                }
-
-                if ($flag) {
-                    Session::set('form_info', '');
-                    $this->success("添加成功！", "articlelist");
-                } else {
-                    Session::set('form_info', $params);
+                    Db::commit();
+                } catch (\Exception $e) {
+                    Db::rollback();
                     $this->error("添加失败！", "add");
                 }
+                $this->success("添加成功！", "articlelist");
 
             }
 
@@ -105,7 +97,8 @@ class Article extends Base {
     public function articlelist() {
 
         // $list = Db::table('think_article')->paginate(10);
-        $list = Db::view("think_article", "*")->view('think_category', 'name as cname', 'think_article.classifyid=think_category.id')->paginate(10);
+        $list = Db::view("think_article", "*")->view('think_category', 'name as cname', 'think_article.classifyid=think_category.id', "LEFT")->paginate(10);
+
         $page = $list->render();
         $this->assign('list', $list);
 
@@ -139,18 +132,42 @@ class Article extends Base {
 
     public function del() {
         //删除文章记得删除对应标签中的数量，设计三个表article tagmap tag,
-        //所以要启动事务
+        //删除文章中对应的数据
+        //删除tagmap当文章对应的aid
+        //tag表中对应的标签-1
         $params = $this->request->param();
-        if (!!$params["id"]) {
-            $res = Db::table("think_article")->delete($params["id"]);
-            if ($res) {
-                $this->success("删除成功！", "articlelist");
-            } else {
-                $this->error("删除失败！", "articlelist");
+
+        Db::startTrans();
+
+        try {
+
+            $resDel = Db::table("think_article")->delete($params["id"]);
+
+            if ($resDel) {
+                //删除tagmap
+                $tagStr = Db::table("think_tagmap")->where("aid", $params["id"])->field('group_concat(tagid) as tagid')->group('aid')->find();
+                Db::table("think_tagmap")->where("aid", $params["id"])->delete();
+
+                $tagDelArr = explode(",", $tagStr["tagid"]);
+
+                $tagAllArr = Db::table("think_tag")->select();
+                if (!!$tagAllArr) {
+                    foreach ($tagAllArr as $key => $value) {
+                        if (in_array($value["id"], $tagDelArr)) {
+                            Db::table("think_tag")->where("id", $value["id"])->update(["num" => (intval($value["num"]) - 1)]);
+                        }
+                    }
+                }
             }
-        } else {
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
             $this->error("删除失败！", "articlelist");
         }
+
+        $this->success("删除成功！", "articlelist");
+
+        //如果文章id不存在 就返回0,
 
     }
     public function edit() {
@@ -159,6 +176,9 @@ class Article extends Base {
         if ($this->request->isPost()) {
             //涉及tagmap category article 表 所以启动事务
             date_default_timezone_set('PRC');
+
+            print_r($params);
+
             //获取原来的tagId
             $oldTagId = Db::table("think_article")->where('id', $params["id"])->value("tagid");
             if ($oldTagId) {
@@ -182,7 +202,6 @@ class Article extends Base {
                     'tags' => $params["tags"],
                     'tagid' => $params["tagid"],
                     'iscomment' => $params["iscomment"],
-                    'update_time' => time(),
                 ]);
                 Db::table("think_tagmap")->where("aid", $params["id"])->delete();
                 if ($params["tagid"]) {
@@ -194,19 +213,16 @@ class Article extends Base {
                     Db::table('think_tagmap')->insertAll($insertTagMap);
                     $tagAllData = Db::table("think_tag")->select();
                     foreach ($tagAllData as $k => $v) {
-
                         if (!in_array($v["id"], $oldTagIdArr) && in_array($v["id"], $newTagIdArray)) {
                             Db::table("think_tag")->where("id", $v["id"])->update(["num" => ($v["num"] + 1)]);
-
                         }
                         if (in_array($v["id"], $oldTagIdArr) && !in_array($v["id"], $newTagIdArray)) {
                             Db::table("think_tag")->where("id", $v["id"])->update(["num" => ($v["num"] - 1)]);
                         }
                     }
 
-                    Db::commit();
-
                 }
+                Db::commit();
 
             } catch (\Exception $e) {
                 Db::rollback();

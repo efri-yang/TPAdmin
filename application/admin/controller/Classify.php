@@ -175,11 +175,14 @@ class Classify extends Base {
             }
 
             $childArrId[] = $id;
+
+           echo implode(",", $childArrId);
             Db::startTrans();
             try {
-                echo implode(",", $childArrId);
+               
                 $res = Db::table("think_category")->delete(implode(",", $childArrId));
 
+            
                 if ($res) {
                     Db::table("think_article")->whereNull('classifyid')->update(["classifyid" => 1]);
                 }

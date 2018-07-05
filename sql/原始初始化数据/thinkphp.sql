@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
--- https://www.phpmyadmin.net/
+-- version 4.5.1
+-- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-07-05 02:19:38
--- 服务器版本： 10.1.30-MariaDB
--- PHP Version: 7.2.1
+-- Generation Time: 2018-07-05 03:38:57
+-- 服务器版本： 10.1.19-MariaDB
+-- PHP Version: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -90,7 +88,7 @@ INSERT INTO `think_admin_menus` (`id`, `pid`, `is_show`, `title`, `url`, `param`
 
 CREATE TABLE `think_article` (
   `id` int(11) UNSIGNED NOT NULL,
-  `classifyid` int(11) UNSIGNED NOT NULL,
+  `classifyid` int(11) UNSIGNED DEFAULT NULL,
   `title` char(100) NOT NULL DEFAULT '',
   `keyword` char(30) NOT NULL DEFAULT '',
   `description` char(255) NOT NULL DEFAULT '',
@@ -111,10 +109,9 @@ CREATE TABLE `think_article` (
 
 INSERT INTO `think_article` (`id`, `classifyid`, `title`, `keyword`, `description`, `coverimg`, `content`, `author`, `tags`, `tagid`, `iscomment`, `create_time`, `update_time`, `clicks`) VALUES
 (1, 10, '测试分类1——文章1', '', '', '/Upload/image/ueditor/20180702/df61953440bbd745b955468d406486cb.png', '<p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p>', '', '娱乐', '1', 1, 1530538783, 1530692177, 0),
-(2, 11, '测试分类文1-1——文章1', '', '', '', '<p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p>', '', '娱乐', '1', 1, 1530539823, 1530696167, 0),
-(3, 13, '测试分类文1-1-1——文章1', '', '', '', '<p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p>', '', '娱乐', '1', 1, 1530539853, 1530696154, 0),
-(4, 12, '测试分类文1-2——文章1', '', '', '', '<p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p>', '', '娱乐,体育', '1,2', 1, 1530539967, 1530696190, 0),
-(5, 1, 'dddddddddddddddddd', '', '', '', '<p>ccccccc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ccccccccc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ccccccc</p>', '', '娱乐', '1', 1, 1530720543, 0, 0);
+(2, 11, '测试分类文1-1——文章1', '', '', '', '<p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p>', '', '娱乐', '1', 1, 1530539823, 1530548459, 0),
+(3, 13, '测试分类文1-1-1——文章1', '', '', '', '<p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p>', '', '娱乐', '1', 1, 1530539853, 1530548442, 0),
+(4, 12, '测试分类文1-2——文章1', '', '', '', '<p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p>', '', '娱乐,体育', '1,2', 1, 1530539967, 1530692799, 0);
 
 -- --------------------------------------------------------
 
@@ -287,7 +284,9 @@ INSERT INTO `think_category` (`id`, `pid`, `name`, `description`, `coverimg`, `s
 (8, 7, '美国新闻', '', '', '', '', '', 100),
 (9, 7, '法国新闻', '', '', '', '', '', 100),
 (10, 0, '测试分类1', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
-(12, 10, '测试分类1-2', '测试分类1-2-描述', '/Upload/image/ueditor/20180702/f42843109ec7418eae3607f004acbd87.png', 'SEO标题', 'SEO关键字', 'SEO描述', 100);
+(11, 10, '测试分类1-1', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
+(12, 10, '测试分类1-2', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
+(13, 11, '测试分类1-1-1', '测试分类1-2-描述', '/Upload/image/ueditor/20180702/f42843109ec7418eae3607f004acbd87.png', 'SEO标题', 'SEO关键字', 'SEO描述', 100);
 
 -- --------------------------------------------------------
 
@@ -306,8 +305,8 @@ CREATE TABLE `think_tag` (
 --
 
 INSERT INTO `think_tag` (`id`, `name`, `num`) VALUES
-(1, '娱乐', 5),
-(2, '体育', 1),
+(1, '娱乐', 0),
+(2, '体育', 0),
 (3, '网购', 0),
 (4, '科技', 0);
 
@@ -321,18 +320,6 @@ CREATE TABLE `think_tagmap` (
   `tagid` int(11) UNSIGNED NOT NULL,
   `aid` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `think_tagmap`
---
-
-INSERT INTO `think_tagmap` (`tagid`, `aid`) VALUES
-(1, 1),
-(1, 2),
-(1, 3),
-(1, 4),
-(2, 4),
-(1, 5);
 
 -- --------------------------------------------------------
 
@@ -437,49 +424,50 @@ ALTER TABLE `think_test`
 --
 ALTER TABLE `think_admin_menus`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单id', AUTO_INCREMENT=34;
-
 --
 -- 使用表AUTO_INCREMENT `think_article`
 --
 ALTER TABLE `think_article`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
 --
 -- 使用表AUTO_INCREMENT `think_auth_group`
 --
 ALTER TABLE `think_auth_group`
   MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
 --
 -- 使用表AUTO_INCREMENT `think_auth_rules`
 --
 ALTER TABLE `think_auth_rules`
   MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
-
 --
 -- 使用表AUTO_INCREMENT `think_auth_user`
 --
 ALTER TABLE `think_auth_user`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
-
 --
 -- 使用表AUTO_INCREMENT `think_category`
 --
 ALTER TABLE `think_category`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- 使用表AUTO_INCREMENT `think_tag`
 --
 ALTER TABLE `think_tag`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
 --
 -- 使用表AUTO_INCREMENT `think_test`
 --
 ALTER TABLE `think_test`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-COMMIT;
+--
+-- 限制导出的表
+--
+
+--
+-- 限制表 `think_article`
+--
+ALTER TABLE `think_article`
+  ADD CONSTRAINT `think_article_ibfk_1` FOREIGN KEY (`classifyid`) REFERENCES `think_category` (`id`) ON DELETE SET NULL;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

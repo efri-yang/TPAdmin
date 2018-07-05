@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-06-28 06:20:02
+-- Generation Time: 2018-07-05 02:12:43
 -- 服务器版本： 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -55,9 +55,9 @@ INSERT INTO `think_category` (`id`, `pid`, `name`, `description`, `coverimg`, `s
 (8, 7, '美国新闻', '', '', '', '', '', 100),
 (9, 7, '法国新闻', '', '', '', '', '', 100),
 (10, 0, '测试分类1', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
-(11, 10, '测试分类1-1', '测试分类1-描述', '/Upload/image/ueditor/20180702/403bf5d45a3125582cc494cd03ac03ce.png', '', '', '', 100),
-(12, 10, '测试分类1-2', '测试分类1-2-描述', '/Upload/image/ueditor/20180702/f42843109ec7418eae3607f004acbd87.png', 'SEO标题', 'SEO关键字', 'SEO描述', 100),
-(13, 11, '测试分类1-1-1', '测试分类1-1-1-描述', '', '', '', '', 100);
+(11, 10, '测试分类1-1', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
+(12, 10, '测试分类1-2', '测试分类1-描述', '/Upload/image/ueditor/20180702/efe22bd00c8ff5cfba806d65251141f2.png', 'seo标题', 'seo关键字', 'seo描述', 100),
+(13, 11, '测试分类1-1-1', '测试分类1-2-描述', '/Upload/image/ueditor/20180702/f42843109ec7418eae3607f004acbd87.png', 'SEO标题', 'SEO关键字', 'SEO描述', 100);
 
 --
 -- Indexes for dumped tables
@@ -77,7 +77,7 @@ ALTER TABLE `think_category`
 -- 使用表AUTO_INCREMENT `think_category`
 --
 ALTER TABLE `think_category`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

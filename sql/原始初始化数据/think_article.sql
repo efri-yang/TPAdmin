@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-07-05 02:12:56
+-- Generation Time: 2018-07-04 11:00:18
 -- 服务器版本： 10.1.30-MariaDB
 -- PHP Version: 7.2.1
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `think_article` (
   `id` int(11) UNSIGNED NOT NULL,
-  `classifyid` int(11) UNSIGNED NOT NULL,
+  `classifyid` int(11) UNSIGNED ,
   `title` char(100) NOT NULL DEFAULT '',
   `keyword` char(30) NOT NULL DEFAULT '',
   `description` char(255) NOT NULL DEFAULT '',
@@ -51,10 +51,9 @@ CREATE TABLE `think_article` (
 
 INSERT INTO `think_article` (`id`, `classifyid`, `title`, `keyword`, `description`, `coverimg`, `content`, `author`, `tags`, `tagid`, `iscomment`, `create_time`, `update_time`, `clicks`) VALUES
 (1, 10, '测试分类1——文章1', '', '', '/Upload/image/ueditor/20180702/df61953440bbd745b955468d406486cb.png', '<p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p><p>测试分类1——文章1</p>', '', '娱乐', '1', 1, 1530538783, 1530692177, 0),
-(2, 11, '测试分类文1-1——文章1', '', '', '', '<p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p>', '', '娱乐', '1', 1, 1530539823, 1530696167, 0),
-(3, 13, '测试分类文1-1-1——文章1', '', '', '', '<p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p>', '', '娱乐', '1', 1, 1530539853, 1530696154, 0),
-(4, 12, '测试分类文1-2——文章1', '', '', '', '<p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p>', '', '娱乐,体育', '1,2', 1, 1530539967, 1530696190, 0),
-(5, 1, 'dddddddddddddddddd', '', '', '', '<p>ccccccc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ccccccccc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ccccccc</p>', '', '娱乐', '1', 1, 1530720543, 0, 0);
+(2, 11, '测试分类文1-1——文章1', '', '', '', '<p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p><p>测试分类文1-1——文章1</p>', '', '娱乐', '1', 1, 1530539823, 1530548459, 0),
+(3, 13, '测试分类文1-1-1——文章1', '', '', '', '<p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p><p>测试分类文1-1-1——文章1</p>', '', '娱乐', '1', 1, 1530539853, 1530548442, 0),
+(4, 12, '测试分类文1-2——文章1', '', '', '', '<p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p><p>测试分类文1-2——文章1</p>', '', '娱乐,体育', '1,2', 1, 1530539967, 1530692799, 0);
 
 --
 -- Indexes for dumped tables
@@ -76,6 +75,16 @@ ALTER TABLE `think_article`
 --
 ALTER TABLE `think_article`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- 限制导出的表
+--
+
+--
+-- 限制表 `think_article`
+--
+ALTER TABLE `think_article`
+  ADD CONSTRAINT `think_article_ibfk_1` FOREIGN KEY (`classifyid`) REFERENCES `think_category` (`id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

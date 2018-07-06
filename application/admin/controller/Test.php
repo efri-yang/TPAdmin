@@ -45,10 +45,8 @@ class Test extends Controller {
 
     public function test() {
 
-        $tagAllArr = Db::table("think_tag")->select();
-        foreach ($tagAllArr as $key => $value) {
-            print_r($value);
-        }
+        $base_path = substr($_SERVER['SCRIPT_NAME'], 0, strpos($_SERVER['SCRIPT_NAME'], '/public'));
+        echo $base_path;
 
     }
 }
